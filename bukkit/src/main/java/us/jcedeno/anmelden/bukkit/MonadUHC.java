@@ -71,7 +71,7 @@ public class MonadUHC extends JavaPlugin {
         }
         /** create new command using builder */
         Builder<CommandSender> builder = Command.newBuilder("cloud-command", CommandMeta.simple().build(),
-                "cloudcommand", "cc");
+                "cloudcommand", "cc", "raulcc");
 
         /** Using literals */
         builder = builder.literal("deploy", ArgumentDescription.of("The first agument in the command."), "create");
