@@ -103,10 +103,6 @@ public class MonadUHC extends JavaPlugin {
         paperCommandManager.command(builder);
     }
 
-    void changeSkin(Player player) {
-        player.getPlayerProfile();
-    }
-
     @Override
     public void onDisable() {
         System.out.println("bye bye");
