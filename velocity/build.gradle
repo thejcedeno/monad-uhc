@@ -1,0 +1,15 @@
+plugins {
+    id "io.freefair.lombok" version "6.3.0"
+}
+
+repositories {
+    maven { url 'https://nexus.velocitypowered.com/repository/maven-public/'}
+}
+
+dependencies {
+    /** Import Velocity and its annotation processor */
+    compileOnly 'com.velocitypowered:velocity-api:3.0.1'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
+    /** Import CLOUD for commands */
+    implementation 'cloud.commandframework:cloud-velocity:1.6.1'
+}

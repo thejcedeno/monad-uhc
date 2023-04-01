@@ -1,0 +1,31 @@
+plugins {
+    id 'io.freefair.lombok' version '6.3.0'
+    id 'kr.entree.spigradle' version '2.2.4'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+repositories {
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+}
+
+dependencies {
+    /** Import PaperMC 1.18.1 */
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    /**Import Cloud Paper */
+    implementation 'cloud.commandframework:cloud-paper:1.6.1'
+    /** Import Minimessage */
+    implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
+}
+
+spigot {
+    authors 'jcedeno'
+    apiVersion '1.18'
+    version '2022.1.12.1'
+    name 'Anmelden'
+    load STARTUP
+}
+shadowJar {
+    relocate 'fr.mrmicky', 'shadded.gui'
+}
+
+build.dependsOn shadowJar
