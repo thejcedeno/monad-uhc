@@ -17,7 +17,6 @@ import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
-import kr.entree.spigradle.annotations.SpigotPlugin;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 /**
@@ -48,12 +47,11 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  * 
  * @author jcedeno
  */
-@SpigotPlugin
 public class AnmeldenBukkit extends JavaPlugin {
     /** Command Manager for cloud framework */
     BukkitCommandManager<CommandSender> manager;
     /** Minimessage constant */
-    private static final MiniMessage MM = MiniMessage.get();
+    private static final MiniMessage MM = MiniMessage.miniMessage();
 
     @Override
     public void onEnable() {
@@ -92,7 +90,7 @@ public class AnmeldenBukkit extends JavaPlugin {
                     ? (Boolean) context.getOptional("Upgraded Hardware").get()
                     : false;
             /** Send message to player */
-            sender.sendMessage(MM.parse("<green>Hellow <yellow>" + sender.getName() + "<green>!\n"
+            sender.sendMessage(MM.deserialize("<green>Hellow <yellow>" + sender.getName() + "<green>!\n"
                     + "<yellow>You have requested a game named <green>" + name + "<yellow> with <green>" + hour
                     + "<yellow> hours and <green>" + upgraded + "<yellow> upgraded hardware."));
         });
