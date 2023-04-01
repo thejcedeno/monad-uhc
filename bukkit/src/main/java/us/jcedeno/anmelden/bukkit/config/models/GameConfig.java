@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
+import us.jcedeno.anmelden.bukkit.scenarios.model.BaseScenario;
 
 /**
  * A dataclass to represent a UHC Game Configuration. This is used to store and
@@ -25,8 +26,11 @@ public class GameConfig {
     // TODO: Use dedidcated object for this later
     private List<String> whitelist; // List of UUIDs or offlineplayer names.
 
+    // TODO: replace with better object
+    private String teamConfig = "cTo2"; // cTo, rTo3, cTo4, ffa, 
+
     // Game Settings
-    private List<String> scenarios;
+    private List<BaseScenario> scenarios;
     private boolean nether;
     private boolean end;
     private boolean pvp;
