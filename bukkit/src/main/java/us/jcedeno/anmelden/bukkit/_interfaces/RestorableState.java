@@ -1,4 +1,4 @@
-package us.jcedeno.anmelden.bukkit.interfaces;
+package us.jcedeno.anmelden.bukkit._interfaces;
 
 /**
  * This interface is used to allow objects to be snapshotted and restored in case

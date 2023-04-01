@@ -1,4 +1,4 @@
-package us.jcedeno.anmelden.bukkit.utils;
+package us.jcedeno.anmelden.bukkit._utils;
 
 public class GlobalUtils {
 
