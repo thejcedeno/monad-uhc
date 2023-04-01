@@ -1,4 +1,4 @@
-package us.jcedeno.anmelden.bukkit.scenarios.model;
+package us.jcedeno.anmelden.bukkit.scenarios.models;
 
 public class BaseScenario {
     String name;

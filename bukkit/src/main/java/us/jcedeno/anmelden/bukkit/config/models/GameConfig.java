@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
-import us.jcedeno.anmelden.bukkit.scenarios.model.BaseScenario;
+import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
 /**
  * A dataclass to represent a UHC Game Configuration. This is used to store and
