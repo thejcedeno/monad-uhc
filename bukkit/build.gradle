@@ -9,27 +9,51 @@ repositories {
     jitpack()
 }
 
+ext {
+    versions = [
+        paper: '1.19.4',
+        cloudPaper: '1.8.3',
+        adventureTextMinimessage: '4.13.0'
+    ]
+}
+
 dependencies {
-    /** Import PaperMC 1.18.1 */
-    compileOnly paper("1.19.4")
+    /** Import PaperMC */
+    compileOnly paper(versions.paper)
     /**Import Cloud Paper */
-    implementation 'cloud.commandframework:cloud-core:1.8.3'
-    implementation 'cloud.commandframework:cloud-annotations:1.8.3'
-    annotationProcessor 'cloud.commandframework:cloud-annotations:1.8.3'
-    implementation 'cloud.commandframework:cloud-brigadier:1.8.3'
+    implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
+    implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
+    annotationProcessor "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
+    implementation "cloud.commandframework:cloud-brigadier:${versions.cloudPaper}"
     implementation 'me.lucko:commodore:1.9'
-    implementation 'cloud.commandframework:cloud-paper:1.8.3'
+    implementation "cloud.commandframework:cloud-paper:${versions.cloudPaper}"
     /** Import Minimessage */
-    implementation "net.kyori:adventure-text-minimessage:4.13.0"
+    implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
+}
+
+def date() {
+    def date = new Date()
+    def formattedDate = date.format('yyyy.M.d')
+    return formattedDate
+}
+
+def commitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    stdout.toString().trim()
 }
 
 spigot {
     authors 'jcedeno'
     apiVersion '1.19'
-    version '2023.4.1.1'
+    version "${date()}-${commitHash()}"
     name 'monad-uhc'
     load STARTUP
 }
+
 shadowJar {
     relocate 'fr.mrmicky', 'shadded.gui'
 }
