@@ -1,4 +1,4 @@
-package us.jcedeno.anmelden.bukkit;
+package us.jcedeno.anmelden.bukkit._models;
 
 /**
  * An abstract class that represent the context of a game. This is the definition of the game loop and how to serialize 

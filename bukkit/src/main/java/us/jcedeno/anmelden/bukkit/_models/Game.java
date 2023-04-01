@@ -1,4 +1,4 @@
-package us.jcedeno.anmelden.bukkit;
+package us.jcedeno.anmelden.bukkit._models;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
