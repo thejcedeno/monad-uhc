@@ -1,0 +1,5 @@
+#!/bin/bash
+# Build the project
+./build-gradle.sh
+# Now move the newly generated jar
+mv build/libs/bukkit-*-all.jar debug/plugins/monad-uhc.jar && cd debug && ./start.sh 

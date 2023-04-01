@@ -47,9 +47,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  * 
  * @author jcedeno
  */
-public class AnmeldenBukkit extends JavaPlugin {
+public class MonadUHC extends JavaPlugin {
     /** Command Manager for cloud framework */
-    BukkitCommandManager<CommandSender> manager;
+    PaperCommandManager<CommandSender> paperCommandManager;
     /** Minimessage constant */
     private static final MiniMessage MM = MiniMessage.miniMessage();
 
@@ -57,14 +57,18 @@ public class AnmeldenBukkit extends JavaPlugin {
     public void onEnable() {
         /** Intialize the command manager. */
         try {
-            this.manager = new PaperCommandManager<>(this, CommandExecutionCoordinator.simpleCoordinator(),
+            this.paperCommandManager = new PaperCommandManager<>(this, CommandExecutionCoordinator.simpleCoordinator(),
                     Function.identity(),
                     Function.identity());
         } catch (Exception e) {
             e.printStackTrace();
         }
         /** Register brigadier. */
-        this.manager.registerBrigadier();
+        try {
+            this.paperCommandManager.registerBrigadier();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         /** create new command using builder */
         Builder<CommandSender> builder = Command.newBuilder("cloud-command", CommandMeta.simple().build(),
                 "cloudcommand", "cc");
@@ -96,7 +100,7 @@ public class AnmeldenBukkit extends JavaPlugin {
         });
 
         /** register with manager. */
-        manager.command(builder);
+        paperCommandManager.command(builder);
     }
 
     void changeSkin(Player player) {

@@ -11,9 +11,14 @@ repositories {
 
 dependencies {
     /** Import PaperMC 1.18.1 */
-    compileOnly paper("1.19.3")
+    compileOnly paper("1.19.4")
     /**Import Cloud Paper */
-    implementation 'cloud.commandframework:cloud-paper:1.7.1'
+    implementation 'cloud.commandframework:cloud-core:1.8.3'
+    implementation 'cloud.commandframework:cloud-annotations:1.8.3'
+    annotationProcessor 'cloud.commandframework:cloud-annotations:1.8.3'
+    implementation 'cloud.commandframework:cloud-brigadier:1.8.3'
+    implementation 'me.lucko:commodore:1.9'
+    implementation 'cloud.commandframework:cloud-paper:1.8.3'
     /** Import Minimessage */
     implementation "net.kyori:adventure-text-minimessage:4.13.0"
 }
