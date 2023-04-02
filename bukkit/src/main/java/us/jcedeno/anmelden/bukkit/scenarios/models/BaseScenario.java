@@ -1,10 +1,25 @@
 package us.jcedeno.anmelden.bukkit.scenarios.models;
 
-public interface BaseScenario {
+import lombok.AllArgsConstructor;
 
-    public String name();
-    public String description();
+@AllArgsConstructor
+public class BaseScenario implements IScenario{
+    private String name;
+    private String description;
 
-    abstract void init();
+    @Override
+    public String name() {
+        return this.name;
+    }
 
+    @Override
+    public String description() {
+        return this.description;
+    }
+
+    @Override
+    public void init() {
+        throw new UnsupportedOperationException("Unimplemented method 'init'");
+    }
+    
 }

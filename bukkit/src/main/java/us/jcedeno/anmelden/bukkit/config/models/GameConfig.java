@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
-import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
+import us.jcedeno.anmelden.bukkit.scenarios.models.IScenario;
 
 /**
  * A dataclass to represent a UHC Game Configuration. This is used to store and
@@ -30,7 +30,7 @@ public class GameConfig {
     private String teamConfig = "cTo2"; // cTo, rTo3, cTo4, ffa, 
 
     // Game Settings
-    private List<BaseScenario> scenarios;
+    private List<IScenario> scenarios;
     private boolean nether;
     private boolean end;
     private boolean pvp;
