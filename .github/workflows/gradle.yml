@@ -38,7 +38,7 @@ jobs:
         EOL
     # Build the project
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew :bukkit:clean :bukkit:build 
     # Publish to maven repository
     - name: Build with Gradle
       run: ./gradlew publish
@@ -46,4 +46,4 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: monad-uhc-jdk-17
-        path: build/libs
+        path: bukkit/build/libs
