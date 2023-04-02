@@ -31,6 +31,15 @@ dependencies {
     implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
 }
 
+def branch() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 def date() {
     def date = new Date()
     def formattedDate = date.format('yyyy.M.d')
@@ -49,7 +58,7 @@ def commitHash() {
 spigot {
     authors 'jcedeno'
     apiVersion '1.19'
-    version "${date()}-${commitHash()}"
+    version "${date()}-${branch()}(${commitHash()})"
     name 'monad-uhc'
     load STARTUP
 }
