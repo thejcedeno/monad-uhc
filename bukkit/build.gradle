@@ -43,6 +43,15 @@ def branch() {
     return stdout.toString().trim()
 }
 
+def branch() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 def date() {
     def date = new Date()
     def formattedDate = date.format('yyyy.M.d')
