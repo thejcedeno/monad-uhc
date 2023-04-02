@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.scenarios.impl.Cutclean;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
-import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
 
 /**
  * A Singleton class that handles all the scenarios and their registration.
