@@ -56,7 +56,7 @@ public class MonadUHC extends JavaPlugin {
     private @Getter PaperCommandManager<CommandSender> paperCommandManager;
     private @Getter AnnotationParser<CommandSender> annotationParser;
     /** Managers */
-    private ScenarioManager scenarioManager;
+    private @Getter ScenarioManager scenarioManager;
 
 
     public static MonadUHC instance() {

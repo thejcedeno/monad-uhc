@@ -1,9 +1,8 @@
 package us.jcedeno.anmelden.bukkit.scenarios;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -21,9 +20,11 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
  * @author thejcedeno
  */
 public class ScenarioManager {
-    private Map<BaseScenario, Boolean> scenarios = new HashMap<>(){{
-        put(Cutclean.create(), false);
-    }};
+    private Map<BaseScenario, Boolean> scenarios = new HashMap<>() {
+        {
+            put(Cutclean.create(), false);
+        }
+    };
 
     /**
      * Constructor for the ScenarioManager class.
@@ -32,6 +33,16 @@ public class ScenarioManager {
      */
     public ScenarioManager(final MonadUHC instance) {
         this.registerScenarios();
+    }
+
+    /**
+     * A utility function to get all the enabled scenarios.
+     * 
+     * @return A list of all the enabled scenarios.
+     */
+    public List<BaseScenario> enabledScenarios() {
+        return scenarios.entrySet().stream().filter(e -> e.getValue()).map(e -> e.getKey())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -51,11 +62,18 @@ public class ScenarioManager {
         this.scenarios.keySet().forEach(BaseScenario::init);
     }
 
-    public void enableScenario(BaseScenario scenario) {
+    public void enableScenario(String scenarioName){
+
+    }
+
+    protected void enableScenario(BaseScenario scenario) {
         var clazz = scenario.getClass();
         // Check if clazz implements org.bukkit.event.Listener
         if (Listener.class.isAssignableFrom(clazz))
             Bukkit.getPluginManager().registerEvents((ListenerScenario) scenario, MonadUHC.instance());
+
+        scenario.enable();
+        scenarios.put(scenario, true);
     }
 
     public void disableScenario(BaseScenario scenario) {
@@ -63,6 +81,9 @@ public class ScenarioManager {
         // Check if clazz implements org.bukkit.event.Listener
         if (Listener.class.isAssignableFrom(clazz))
             HandlerList.unregisterAll((ListenerScenario) scenario);
+
+        scenario.disable();
+        scenarios.put(scenario, false);
     }
 
 }

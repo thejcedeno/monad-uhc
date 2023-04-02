@@ -1,5 +1,7 @@
 package us.jcedeno.anmelden.bukkit.scenarios.commands;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,14 +17,24 @@ import cloud.commandframework.annotations.specifier.Greedy;
 import cloud.commandframework.annotations.specifier.Liberal;
 import cloud.commandframework.annotations.specifier.Quoted;
 import lombok.extern.log4j.Log4j2;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import us.jcedeno.anmelden.bukkit.MonadUHC;
 
+/**
+ * A class holding all the user-facing Scenario commands.
+ * 
+ * @author thejcedeno.
+ */
 @CommandContainer
 @Log4j2
 public final class ScenarioCommands {
 
-    // REQUIRED BY CLOUD FRAMEWORK
-    public ScenarioCommands(final @NonNull AnnotationParser<CommandSender> annotationParser) {
+    @CommandMethod("scenario")
+    public void enabledScenarios(final @NonNull CommandSender sender) {
+        sender.sendMessage(miniMessage().deserialize("<green>Enabled Scenarios:"));
+
+        MonadUHC.instance().getScenarioManager().enabledScenarios()
+                .forEach(scenario -> sender.sendMessage("- " + scenario.name()));
+
     }
 
     @CommandPermission("anmelden.scenarios.admin")
@@ -36,7 +48,7 @@ public final class ScenarioCommands {
     @CommandMethod("scenario echo <echo-text>")
     public void echoToUser(final @NonNull CommandSender sender, @Argument("echo-text") @Greedy String text) {
         if (sender instanceof Player p) {
-            p.sendMessage(MiniMessage.miniMessage().deserialize(text));
+            p.sendMessage(miniMessage().deserialize(text));
             return;
         }
         sender.sendMessage(text);
@@ -49,7 +61,7 @@ public final class ScenarioCommands {
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (parse) {
-                player.sendMessage(MiniMessage.miniMessage().deserialize(text));
+                player.sendMessage(miniMessage().deserialize(text));
                 return;
             }
             player.sendMessage(text);
@@ -57,6 +69,10 @@ public final class ScenarioCommands {
 
         log.info("Echoed to all players the message: " + text + " with parse: " + parse);
 
+    }
+
+    // REQUIRED BY CLOUD FRAMEWORK
+    public ScenarioCommands(final @NonNull AnnotationParser<CommandSender> annotationParser) {
     }
 
 }
