@@ -20,6 +20,13 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
+/**
+ * A scenario that automatically smelts ores and food.
+ * 
+ * TODO: Add a config file to allow the user to change the xp multiplier.
+ * 
+ * @author thejcedeno.
+ */
 @Log4j2
 public class Cutclean extends BaseScenario implements Listener {
 
@@ -32,14 +39,37 @@ public class Cutclean extends BaseScenario implements Listener {
     private @Getter @Setter int netheriteXp = 5;
     private static Random random = new Random();
 
-    public Cutclean(String name, String description) {
+    /**
+     * Static constructor for the Cutclean scenario.
+     */
+    public static Cutclean create() {
+        return new Cutclean("Cutclean", "All ores and food are automatically smelted");
+    }
+
+    /**
+     * Constructor for the Cutclean scenario.
+     * 
+     * @param name        The name of the scenario.
+     * @param description The description of the scenario.
+     */
+    protected Cutclean(String name, String description) {
         super(name, description);
         this.init();
     }
 
     @Override
     public void init() {
-        log.info("Cutclean scenario initialized");
+        log.info("[☑] Cutclean scenario initialized");
+    }
+
+    @Override
+    public void enable() {
+        log.info("[✅] Cutclean scenario enabled");
+    }
+
+    @Override
+    public void disable() {
+        log.info("[❌] Cutclean scenario disabled");
     }
 
     /**

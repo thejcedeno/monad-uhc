@@ -51,14 +51,21 @@ import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
  * @author jcedeno and her gf
  */
 public class MonadUHC extends JavaPlugin {
+    private static MonadUHC instance;
     /** Command Manager for cloud framework */
     private @Getter PaperCommandManager<CommandSender> paperCommandManager;
     private @Getter AnnotationParser<CommandSender> annotationParser;
     /** Managers */
     private ScenarioManager scenarioManager;
 
+
+    public static MonadUHC instance() {
+        return MonadUHC.instance;
+    }
+
     @Override
     public void onEnable() {
+        MonadUHC.instance = this;
         /** Intialize the command manager. */
         try {
             this.paperCommandManager = new PaperCommandManager<>(this, CommandExecutionCoordinator.simpleCoordinator(),

@@ -1,26 +1,68 @@
 package us.jcedeno.anmelden.bukkit.scenarios;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+
 import us.jcedeno.anmelden.bukkit.MonadUHC;
-import us.jcedeno.anmelden.bukkit.scenarios.commands.ScenarioCommands;
+import us.jcedeno.anmelden.bukkit.scenarios.impl.Cutclean;
+import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
+import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
 
+/**
+ * A Singleton class that handles all the scenarios and their registration.
+ * 
+ * @author thejcedeno
+ */
 public class ScenarioManager {
-    private ScenarioCommands scenarioCommands;
+    private Map<BaseScenario, Boolean> scenarios = new HashMap<>(){{
+        put(Cutclean.create(), false);
+    }};
 
+    /**
+     * Constructor for the ScenarioManager class.
+     * 
+     * @param instance The instance of the plugin.
+     */
     public ScenarioManager(final MonadUHC instance) {
-        this.scenarioCommands = new ScenarioCommands(this);
+        this.registerScenarios();
+    }
 
+    /**
+     * A utility function to get all the scenarios in a map.
+     * 
+     * @return A map of all the scenarios.
+     */
+    public Map<String, BaseScenario> getScenariosMap() {
+        return scenarios.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), e -> e.getKey()));
     }
 
     /**
      * Function that handles all the scenario registration to make the gamemode
      * modifiers available.
      */
-    protected void registerScenarios(){
-        /*
-         * TODO: Instead of doing this, figure out a way to register all the
-         * scenariosautomatically using reflection and/or annotations. This will make it
-         * so we don't have to manually register each scenario here.
-         */
+    protected void registerScenarios() {
+        this.scenarios.keySet().forEach(BaseScenario::init);
+    }
+
+    public void enableScenario(BaseScenario scenario) {
+        var clazz = scenario.getClass();
+        // Check if clazz implements org.bukkit.event.Listener
+        if (Listener.class.isAssignableFrom(clazz))
+            Bukkit.getPluginManager().registerEvents((ListenerScenario) scenario, MonadUHC.instance());
+    }
+
+    public void disableScenario(BaseScenario scenario) {
+        var clazz = scenario.getClass();
+        // Check if clazz implements org.bukkit.event.Listener
+        if (Listener.class.isAssignableFrom(clazz))
+            HandlerList.unregisterAll((ListenerScenario) scenario);
     }
 
 }
