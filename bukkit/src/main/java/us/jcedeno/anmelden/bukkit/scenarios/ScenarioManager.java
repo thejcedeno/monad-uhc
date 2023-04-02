@@ -77,6 +77,10 @@ public class ScenarioManager {
     }
 
     protected void enableScenario(BaseScenario scenario) {
+        // Throw an exception if the scenario is already enabled.
+        if (scenarios.get(scenario))
+            throw new RuntimeException("Scenario already enabled");
+
         if (scenario instanceof Listener listener)
             Bukkit.getPluginManager().registerEvents(listener, MonadUHC.instance());
 
@@ -98,6 +102,10 @@ public class ScenarioManager {
     }
 
     public void disableScenario(BaseScenario scenario) {
+        // Throw an exception if the scenario is not enabled.
+        if (scenarios.get(scenario))
+            throw new RuntimeException("Scenario not enabled");
+
         if (scenario instanceof Listener listener)
             HandlerList.unregisterAll(listener);
 
