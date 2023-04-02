@@ -30,6 +30,11 @@ public final class ScenarioCommands {
 
     @CommandMethod("scenario")
     public void enabledScenarios(final @NonNull CommandSender sender) {
+        // Sender error message, in red, saying that there are no scenarios enabled.
+        if (MonadUHC.instance().getScenarioManager().enabledScenarios().isEmpty()) {
+            sender.sendMessage(miniMessage().deserialize("<red>There are no scenarios enabled."));
+            return;
+        }
         sender.sendMessage(miniMessage().deserialize("<green>Enabled Scenarios:"));
 
         MonadUHC.instance().getScenarioManager().enabledScenarios()

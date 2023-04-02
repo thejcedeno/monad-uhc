@@ -8,7 +8,6 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.processing.CommandContainer;
-import cloud.commandframework.annotations.specifier.Quoted;
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
@@ -30,9 +29,9 @@ public class SudoScenarioCommands {
      */
     @CommandPermission("anmelden.scenarios.admin")
     @CommandMethod("sscenario enable <scenario>")
-    public void enableScenario(final CommandSender sender, @Argument("scenario") @Quoted final String scenario) {
+    public void enableScenario(final CommandSender sender, @Argument("scenario") final ScenarioArgument scenario) {
         log.debug("Enabling scenario: {}", scenario);
-        MonadUHC.instance().getScenarioManager().enableScenario(scenario);
+        MonadUHC.instance().getScenarioManager().enableScenario(scenario.toString());
         // Send pretty message to user
         if (sender instanceof Player p) {
             p.sendMessage(MiniMessage.miniMessage().deserialize(
@@ -51,9 +50,9 @@ public class SudoScenarioCommands {
      */
     @CommandPermission("anmelden.scenarios.admin")
     @CommandMethod("sscenario disable <scenario>")
-    public void disableScenario(final CommandSender sender, @Argument("scenario") @Quoted final String scenario) {
+    public void disableScenario(final CommandSender sender, @Argument("scenario") final ScenarioArgument scenario) {
         log.debug("Disabling scenario: {}", scenario);
-        MonadUHC.instance().getScenarioManager().disableScenario(scenario);
+        MonadUHC.instance().getScenarioManager().disableScenario(scenario.toString());
         // Send pretty message to user
         if (sender instanceof Player p) {
             p.sendMessage(MiniMessage.miniMessage().deserialize(
@@ -64,31 +63,29 @@ public class SudoScenarioCommands {
 
     }
 
+    private static enum ScenarioArgument {
+        CUTCLEAN, TIMEBOMB, FIRELESS;
+    }
+
     /**
      * A function to automatically toggle off or on a scenario.
      */
     @CommandPermission("anmelden.scenarios.admin")
     @CommandMethod("sscenario toggle <scenario>")
-    public void toggleScenario(final CommandSender sender, @Argument("scenario") @Quoted final String scenario) {
+    public void toggleScenario(final CommandSender sender, @Argument("scenario") final ScenarioArgument scenario) {
         log.debug("Toggling scenario: {}", scenario);
         var scenarioManager = MonadUHC.instance().getScenarioManager();
 
-        var optScen = scenarioManager.enabledScenarios().stream().filter(s -> s.name().equalsIgnoreCase(scenario))
-                .findFirst();
+        var toggled = scenarioManager.getScenarioFromStr(scenario.toString()).toggle(scenarioManager);
+        log.info("Scenario {} has been toggled to {}", scenario, toggled);
 
-        optScen.orElseThrow(() -> new IllegalArgumentException("Scenario not found."));
-
-        optScen.ifPresentOrElse(s -> {
-            scenarioManager.disableScenario(scenario);
-        }, () -> {
-            scenarioManager.enableScenario(scenario);
-        });
         // Send pretty message to user
         if (sender instanceof Player p) {
             p.sendMessage(MiniMessage.miniMessage().deserialize(
-                    String.format("<Yellow>Scenario <white><bold>%s</bold></white> has been toggled.", scenario)));
+                    String.format("<yellow><white><bold>%s</bold></white> has been <bold>%s.</bold>", scenario,
+                            !toggled ? "<green>enabled</green>" : "<red>disabled</red>")));
         } else {
-            sender.sendMessage(String.format("Scenario %s has been toggled.", scenario));
+            sender.sendMessage(String.format("Scenario %s has been", scenario));
         }
 
     }

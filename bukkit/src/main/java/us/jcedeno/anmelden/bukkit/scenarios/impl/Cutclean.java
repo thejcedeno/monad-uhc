@@ -57,16 +57,25 @@ public class Cutclean extends BaseScenario implements Listener {
         this.init();
     }
 
+    /**
+     * OPTIONAL
+     */
     @Override
     public void init() {
         log.info("[☑] Cutclean scenario initialized");
     }
 
+    /**
+     * OPTIONAL
+     */
     @Override
     public void enable() {
         log.info("[✅] Cutclean scenario enabled");
     }
 
+    /**
+     * OPTIONAL
+     */
     @Override
     public void disable() {
         log.info("[❌] Cutclean scenario disabled");
@@ -81,8 +90,8 @@ public class Cutclean extends BaseScenario implements Listener {
         final var block = e.getBlock();
         final var player = e.getPlayer();
         final var itemInHand = player.getInventory().getItemInMainHand();
-        var extras = 1;
-        var extraGold = 1;
+        var extras = 0;
+        var extraGold = 0;
 
         if (itemInHand.getType() == Material.AIR || itemInHand.containsEnchantment(Enchantment.SILK_TOUCH))
             return;

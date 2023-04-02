@@ -1,25 +1,20 @@
 package us.jcedeno.anmelden.bukkit;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import java.util.function.Function;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import cloud.commandframework.ArgumentDescription;
-import cloud.commandframework.Command;
-import cloud.commandframework.Command.Builder;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.ParserParameters;
 import cloud.commandframework.arguments.parser.StandardParameters;
-import cloud.commandframework.arguments.standard.BooleanArgument;
-import cloud.commandframework.arguments.standard.DoubleArgument;
-import cloud.commandframework.arguments.standard.StringArgument;
-import cloud.commandframework.arguments.standard.StringArgument.StringMode;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
 /**
@@ -50,6 +45,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
  * 
  * @author jcedeno and her gf
  */
+@Log4j2
 public class MonadUHC extends JavaPlugin {
     private static MonadUHC instance;
     /** Command Manager for cloud framework */
@@ -57,7 +53,6 @@ public class MonadUHC extends JavaPlugin {
     private @Getter AnnotationParser<CommandSender> annotationParser;
     /** Managers */
     private @Getter ScenarioManager scenarioManager;
-
 
     public static MonadUHC instance() {
         return MonadUHC.instance;
@@ -81,7 +76,14 @@ public class MonadUHC extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
+        /** Register Exception Handler */
+        this.paperCommandManager.registerExceptionHandler(RuntimeException.class, (sender, exception) -> {
+            log.error("An exception occurred while executing a command for " + sender.getName(), exception);
+            sender.sendMessage(miniMessage().deserialize("<red>There was an error while executing the command."));
+            exception.printStackTrace();
+        });
+
         /** Reigster annotation parser. */
         final Function<ParserParameters, CommandMeta> commandMetaFunction = p -> CommandMeta.simple()
                 // This will allow you to decorate commands with descriptions
@@ -97,8 +99,8 @@ public class MonadUHC extends JavaPlugin {
         constructCommands();
     }
 
-    private void constructCommands(){
-         // Parse all @CommandMethod-annotated methods
+    private void constructCommands() {
+        // Parse all @CommandMethod-annotated methods
         this.annotationParser.parse(this);
         // Parse all @CommandContainer-annotated classes
         try {
