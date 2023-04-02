@@ -15,6 +15,7 @@ import cloud.commandframework.annotations.specifier.Greedy;
 import cloud.commandframework.annotations.specifier.Quoted;
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
 @CommandContainer
 @Log4j2
@@ -22,6 +23,10 @@ public final class ScenarioCommands {
 
     public ScenarioCommands(final @NonNull AnnotationParser<CommandSender> annotationParser) {
         // REQUIRED BY CLOUD FRAMEWORK
+    }
+
+    public ScenarioCommands(final ScenarioManager scenarioManager){
+        log.info("Initializing Scenario Commands");
     }
 
     @CommandPermission("anmelden.scenarios.admin")

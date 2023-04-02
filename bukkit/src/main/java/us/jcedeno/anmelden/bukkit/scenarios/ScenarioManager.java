@@ -7,7 +7,7 @@ public class ScenarioManager {
     private ScenarioCommands scenarioCommands;
 
     public ScenarioManager(final MonadUHC instance) {
-        this.scenarioCommands = new ScenarioCommands(instance.getAnnotationParser());
+        this.scenarioCommands = new ScenarioCommands(this);
 
     }
 
