@@ -12,6 +12,7 @@ import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.processing.CommandContainer;
 import cloud.commandframework.annotations.specifier.Greedy;
+import cloud.commandframework.annotations.specifier.Liberal;
 import cloud.commandframework.annotations.specifier.Quoted;
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,11 +22,11 @@ import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 @Log4j2
 public final class ScenarioCommands {
 
+    // REQUIRED BY CLOUD FRAMEWORK
     public ScenarioCommands(final @NonNull AnnotationParser<CommandSender> annotationParser) {
-        // REQUIRED BY CLOUD FRAMEWORK
     }
 
-    public ScenarioCommands(final ScenarioManager scenarioManager){
+    public ScenarioCommands(final ScenarioManager scenarioManager) {
         log.info("Initializing Scenario Commands");
     }
 
@@ -45,10 +46,11 @@ public final class ScenarioCommands {
         }
         sender.sendMessage(text);
     }
-    
+
     @ProxiedBy("echo-all")
-    @CommandMethod("scenario echo-all <text> <parse>")
-    public void echoToAll(final @NonNull CommandSender sender, @Argument("text") @Quoted String text, @Argument("parse")Boolean parse) {
+    @CommandMethod("scenario echo-all <text> [parse]")
+    public void echoToAll(final @NonNull CommandSender sender, @Argument("text") @Quoted String text,
+            @Argument(value = "parse", defaultValue = "true") @Liberal Boolean parse) {
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (parse) {
@@ -61,6 +63,5 @@ public final class ScenarioCommands {
         log.info("Echoed to all players the message: " + text + " with parse: " + parse);
 
     }
-
 
 }
