@@ -45,7 +45,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  * For further details, contact develop at jcedeno@hynix.studio
  * </p>
  * 
- * @author jcedeno
+ * @author jcedeno and her gf
  */
 public class MonadUHC extends JavaPlugin {
     /** Command Manager for cloud framework */
