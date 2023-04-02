@@ -78,10 +78,8 @@ public class ScenarioManager {
     }
 
     protected void enableScenario(BaseScenario scenario) {
-        var clazz = scenario.getClass();
-        // Check if clazz implements org.bukkit.event.Listener
-        if (Listener.class.isAssignableFrom(clazz))
-            Bukkit.getPluginManager().registerEvents((ListenerScenario) scenario, MonadUHC.instance());
+        if (scenario instanceof Listener listener)
+            Bukkit.getPluginManager().registerEvents(listener, MonadUHC.instance());
 
         scenario.enable();
         scenarios.put(scenario, true);
@@ -101,10 +99,8 @@ public class ScenarioManager {
     }
 
     public void disableScenario(BaseScenario scenario) {
-        var clazz = scenario.getClass();
-        // Check if clazz implements org.bukkit.event.Listener
-        if (Listener.class.isAssignableFrom(clazz))
-            HandlerList.unregisterAll((ListenerScenario) scenario);
+        if (scenario instanceof Listener listener)
+            HandlerList.unregisterAll(listener);
 
         scenario.disable();
         scenarios.put(scenario, false);
