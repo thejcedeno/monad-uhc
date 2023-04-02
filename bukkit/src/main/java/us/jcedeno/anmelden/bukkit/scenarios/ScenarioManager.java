@@ -62,7 +62,18 @@ public class ScenarioManager {
         this.scenarios.keySet().forEach(BaseScenario::init);
     }
 
-    public void enableScenario(String scenarioName){
+    /**
+     * A utility function to enable a scenario by name.
+     * *
+     * 
+     * @param scenarioName The name of the scenario to enable.
+     * @throws RuntimeException If the scenario is not found.
+     */
+    public void enableScenario(String scenarioName) {
+        var scenario = scenarios.keySet().stream().filter(s -> s.name().equalsIgnoreCase(scenarioName)).findFirst()
+                .orElseThrow(() -> new RuntimeException("Scenario not found"));
+
+        enableScenario(scenario);
 
     }
 
@@ -74,6 +85,19 @@ public class ScenarioManager {
 
         scenario.enable();
         scenarios.put(scenario, true);
+    }
+
+    /**
+     * A utility function to disable a scenario by name.
+     * 
+     * @param scenarioName The name of the scenario to disable.
+     * @throws RuntimeException If the scenario is not found.
+     */
+    public void disableScenario(String scenarioName) {
+        var scenario = scenarios.keySet().stream().filter(s -> s.name().equalsIgnoreCase(scenarioName)).findFirst()
+                .orElseThrow(() -> new RuntimeException("Scenario not found"));
+
+        disableScenario(scenario);
     }
 
     public void disableScenario(BaseScenario scenario) {
