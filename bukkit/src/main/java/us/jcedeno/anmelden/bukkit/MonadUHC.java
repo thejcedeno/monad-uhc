@@ -3,21 +3,24 @@ package us.jcedeno.anmelden.bukkit;
 import java.util.function.Function;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cloud.commandframework.ArgumentDescription;
 import cloud.commandframework.Command;
 import cloud.commandframework.Command.Builder;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.arguments.parser.ParserParameters;
+import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.arguments.standard.BooleanArgument;
 import cloud.commandframework.arguments.standard.DoubleArgument;
 import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.arguments.standard.StringArgument.StringMode;
-import cloud.commandframework.bukkit.BukkitCommandManager;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
 /**
  * The entry point of the Bukkit side of the Anmelden Project.
@@ -49,9 +52,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  */
 public class MonadUHC extends JavaPlugin {
     /** Command Manager for cloud framework */
-    PaperCommandManager<CommandSender> paperCommandManager;
-    /** Minimessage constant */
-    private static final MiniMessage MM = MiniMessage.miniMessage();
+    private @Getter PaperCommandManager<CommandSender> paperCommandManager;
+    private @Getter AnnotationParser<CommandSender> annotationParser;
+    /** Managers */
+    private ScenarioManager scenarioManager;
 
     @Override
     public void onEnable() {
@@ -66,41 +70,35 @@ public class MonadUHC extends JavaPlugin {
         /** Register brigadier. */
         try {
             this.paperCommandManager.registerBrigadier();
+            this.paperCommandManager.registerAsynchronousCompletions();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /** create new command using builder */
-        Builder<CommandSender> builder = Command.newBuilder("cloud-command", CommandMeta.simple().build(),
-                "cloudcommand", "cc", "raulcc");
+        
+        /** Reigster annotation parser. */
+        final Function<ParserParameters, CommandMeta> commandMetaFunction = p -> CommandMeta.simple()
+                // This will allow you to decorate commands with descriptions
+                .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
+                .build();
 
-        /** Using literals */
-        builder = builder.literal("deploy", ArgumentDescription.of("The first agument in the command."), "create");
-        /** Using String arguments */
-        builder = builder.argument(StringArgument.of("Name for the game.", StringMode.QUOTED));
-        /** Using numbers */
-        builder = builder.argument(DoubleArgument.optional("Hours", 2));
-        /** Upgraded hardware argument using liberal booleans */
-        builder = builder.argument(BooleanArgument.optional("Upgraded Hardware", false));
-        /** Handle the execution */
-        builder = builder.handler(context -> {
-            /** Send message to player */
-            var sender = context.getSender();
-            /** Name parameter */
-            var name = context.get("Name for the game.").toString();
-            /** Hours parameter */
-            var hour = context.getOptional("Hours").isPresent() ? (double) context.get("Hours") : 2;
-            /** Upgraded parameter */
-            var upgraded = context.getOptional("Upgraded Hardware").isPresent()
-                    ? (Boolean) context.getOptional("Upgraded Hardware").get()
-                    : false;
-            /** Send message to player */
-            sender.sendMessage(MM.deserialize("<green>Hellow <yellow>" + sender.getName() + "<green>!\n"
-                    + "<yellow>You have requested a game named <green>" + name + "<yellow> with <green>" + hour
-                    + "<yellow> hours and <green>" + upgraded + "<yellow> upgraded hardware."));
-        });
+        this.annotationParser = new AnnotationParser<>(this.paperCommandManager, CommandSender.class,
+                commandMetaFunction);
+        /** Register Game Related Managers */
+        this.scenarioManager = new ScenarioManager(this);
 
-        /** register with manager. */
-        paperCommandManager.command(builder);
+        // Construct commands
+        constructCommands();
+    }
+
+    private void constructCommands(){
+         // Parse all @CommandMethod-annotated methods
+        this.annotationParser.parse(this);
+        // Parse all @CommandContainer-annotated classes
+        try {
+            this.annotationParser.parseContainers();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
