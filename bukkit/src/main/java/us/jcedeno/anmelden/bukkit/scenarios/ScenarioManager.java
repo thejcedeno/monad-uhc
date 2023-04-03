@@ -120,7 +120,7 @@ public class ScenarioManager {
      * @return A map of all the scenarios.
      */
     public Map<String, BaseScenario> getScenariosMap() {
-        return scenarios.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), e -> e.getKey()));
+        return scenarios.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().getClass().getSimpleName(), e -> e.getKey()));
     }
 
     /**
@@ -129,7 +129,7 @@ public class ScenarioManager {
      * @param scenarioName The name of the scenario to get.
      */
     public BaseScenario getScenarioFromStr(String scenarioName) {
-        return scenarios.keySet().stream().filter(s -> s.name().equalsIgnoreCase(scenarioName)).findFirst()
+        return scenarios.keySet().stream().filter(s -> s.getClass().getSimpleName().equalsIgnoreCase(scenarioName)).findFirst()
                 .orElseThrow(() -> new RuntimeException("Scenario not found"));
     }
 
@@ -141,10 +141,7 @@ public class ScenarioManager {
      * @throws RuntimeException If the scenario is not found.
      */
     public boolean enableScenario(String scenarioName) {
-        var scenario = scenarios.keySet().stream().filter(s -> s.name().equalsIgnoreCase(scenarioName)).findFirst()
-                .orElseThrow(() -> new RuntimeException("Scenario not found"));
-
-        return enableScenario(scenario);
+        return enableScenario(getScenarioFromStr(scenarioName));
     }
 
     /**
@@ -175,10 +172,7 @@ public class ScenarioManager {
      * @throws RuntimeException If the scenario is not found.
      */
     public boolean disableScenario(String scenarioName) {
-        var scenario = scenarios.keySet().stream().filter(s -> s.name().equalsIgnoreCase(scenarioName)).findFirst()
-                .orElseThrow(() -> new RuntimeException("Scenario not found"));
-
-        return disableScenario(scenario);
+        return disableScenario(getScenarioFromStr(scenarioName));
     }
 
     public boolean disableScenario(BaseScenario scenario) {

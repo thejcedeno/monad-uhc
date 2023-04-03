@@ -38,7 +38,7 @@ public final class ScenarioCommands {
 
         if (sender instanceof Player player) {
             var inv = new FastInv(InventoryType.HOPPER, miniMessage()
-                    .deserialize(String.format("<green>Enabled Scenarios(%s): ", enabledScenarios.size())));
+                    .deserialize(String.format("<bold><green>Enabled Scenarios (%s): ", enabledScenarios.size())));
 
             enabledScenarios.forEach(scenario -> inv.addItem(getScenarioItem(scenario), e -> {
                 e.getWhoClicked().sendMessage("You clicked on the scenario " + scenario.name());

@@ -114,6 +114,6 @@ public class SudoScenarioCommands {
             final @NonNull CommandContext<CommandSender> ctx,
             final @NonNull String input) {
         return MonadUHC.instance().getScenarioManager().getScenariosMap().entrySet().stream()
-                .map((entry) -> entry.getValue().name()).collect(Collectors.toList());
+                .map((entry) -> entry.getValue().getClass().getSimpleName()).collect(Collectors.toList());
     }
 }
