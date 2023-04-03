@@ -148,11 +148,6 @@ public class Cutclean extends ListenerScenario {
 
     }
 
-    private static void summonXPOrb(Location loc, int amount) {
-        loc.getWorld().spawn(loc, ExperienceOrb.class).setExperience(amount);
-
-    }
-
     // Method that ensures ores don't fly like in many other servers
     private static Location dropCenter(ItemStack itemStack, Location location) {
         Location centeredLocation = new Location(location.getWorld(), location.getBlockX() + 0.5,
@@ -171,10 +166,4 @@ public class Cutclean extends ListenerScenario {
             bonus = 1;
         return bonus;
     }
-
-    private static boolean isTool(Material material) {
-        return material.toString().contains("PICKAXE") || material.toString().contains("AXE")
-                || material.toString().contains("SHOVEL") || material.toString().contains("HOE");
-    }
-
 }
