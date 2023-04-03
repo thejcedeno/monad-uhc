@@ -13,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
 
@@ -53,11 +52,7 @@ public class Timber extends ListenerScenario {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreakEvent(BlockBreakEvent e) {
-        final long initialTime = System.currentTimeMillis();
         breakTree(e.getBlock(), e.getPlayer());
-
-        e.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<green>It took you <white>"
-                + (System.currentTimeMillis() - initialTime) + "ms<white> to break the tree!"));
     }
 
     /**
