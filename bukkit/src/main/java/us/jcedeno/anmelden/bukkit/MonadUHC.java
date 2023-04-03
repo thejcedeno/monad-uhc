@@ -11,6 +11,7 @@ import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import fr.mrmicky.fastinv.FastInvManager;
 import lombok.Getter;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
@@ -57,6 +58,8 @@ public class MonadUHC extends JavaPlugin {
     @Override
     public void onEnable() {
         MonadUHC.instance = this;
+        /** Register FastInv */
+        FastInvManager.register(this);
         /** Intialize the command manager. */
         try {
             this.paperCommandManager = new PaperCommandManager<>(this, CommandExecutionCoordinator.simpleCoordinator(),

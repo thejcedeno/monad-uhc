@@ -31,6 +31,8 @@ dependencies {
     implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
     /** Import reflections */
     implementation 'org.reflections:reflections:0.10.2'
+    /** Import FastInv */
+    implementation 'fr.mrmicky:FastInv:3.0.3'
 
     
 }
@@ -68,7 +70,7 @@ spigot {
 }
 
 shadowJar {
-    relocate 'fr.mrmicky', 'shadded.gui'
+    relocate 'fr.mrmicky', 'us.jcedeno.anmelden.shadded.fr.mrmicky'
 }
 
 build.dependsOn shadowJar
