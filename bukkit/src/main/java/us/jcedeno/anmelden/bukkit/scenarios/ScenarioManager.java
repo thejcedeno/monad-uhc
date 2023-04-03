@@ -162,10 +162,11 @@ public class ScenarioManager {
         if (scenarios.get(scenario))
             throw new RuntimeException("Scenario already enabled");
 
+        scenario.enable();
+
         if (scenario instanceof Listener listener)
             Bukkit.getPluginManager().registerEvents(listener, MonadUHC.instance());
 
-        scenario.enable();
         return scenarios.put(scenario, true);
     }
 
@@ -185,17 +186,19 @@ public class ScenarioManager {
     public boolean disableScenario(BaseScenario scenario) {
         // Throw an exception if the scenario is not enabled.
         var scenarioStatus = scenarios.get(scenario);
+        
         if (!scenarioStatus) {
             log.info("Scenario not enabled. " + scenario.name() + ", " + scenarioStatus);
             throw new RuntimeException("Scenario not enabled");
-        } else {
-            log.info("Scenario enabled. " + scenario.name() + ", " + scenarioStatus);
         }
+
+        scenario.disable();
 
         if (scenario instanceof Listener listener)
             HandlerList.unregisterAll(listener);
 
-        scenario.disable();
+        log.info("Scenario enabled. " + scenario.name() + ", " + scenarioStatus);
+
         return scenarios.put(scenario, false);
     }
 

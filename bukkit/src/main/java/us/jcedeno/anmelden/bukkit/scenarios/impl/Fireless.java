@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
@@ -14,6 +15,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
  * 
  * @author thejcedeno
  */
+@Log4j2
 @Scenario(name = "Fireless", description = "No fire damage on the overworld!", ui = Material.FIRE_CHARGE)
 public class Fireless extends BaseScenario implements Listener {
 
@@ -40,6 +42,22 @@ public class Fireless extends BaseScenario implements Listener {
                 default:
                     break;
             }
+    }
+
+    /**
+     * Required for auto registration
+     */
+    @Override
+    public void enable() {
+        log.info("[✅] Fireless scenario enabled");
+    }
+
+    /**
+     * Required for auto registration.
+     */
+    @Override
+    public void disable() {
+        log.info("[❌] Fireless scenario disabled");
     }
 
 }

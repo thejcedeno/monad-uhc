@@ -61,7 +61,7 @@ public class Cutclean extends BaseScenario implements Listener {
     }
 
     /**
-     * OPTIONAL
+     * REQUIRED
      */
     @Override
     public void enable() {
@@ -69,7 +69,7 @@ public class Cutclean extends BaseScenario implements Listener {
     }
 
     /**
-     * OPTIONAL
+     * REQUIRED
      */
     @Override
     public void disable() {
