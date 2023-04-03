@@ -13,7 +13,6 @@ import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit._utils.GlobalUtils;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
-import us.jcedeno.anmelden.bukkit.scenarios.impl.Cutclean;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
 /**
@@ -23,11 +22,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
  */
 @Log4j2
 public class ScenarioManager {
-    private Map<BaseScenario, Boolean> scenarios = new HashMap<>() {
-        {
-            put(Cutclean.create(), false);
-        }
-    };
+    private Map<BaseScenario, Boolean> scenarios = new HashMap<>();
 
     /**
      * Constructor for the ScenarioManager class.
@@ -41,15 +36,14 @@ public class ScenarioManager {
 
                     // Check if class is of base scenario type.
                     if (!BaseScenario.class.isAssignableFrom(sc)) {
-                        log.warn(String.format("Class %s is not a subclass of BaseScenario", sc.getName()));
+                        log.warn(String.format("Class %s is not a subclass of BaseScenario.", sc.getName()));
                         return;
                     }
 
                     var annotation = sc.getAnnotation(Scenario.class);
 
                     if (annotation != null) {
-                        log.info(String.format("Attempting to register scenario \nname=%s, \ndescription%s, \nui=%s",
-                                annotation.name(), annotation.description(), annotation.ui()));
+                        log.info(String.format("Attempting to register scenario from class %s.", sc.getName()));
 
                         var constructors = sc.getDeclaredConstructors();
 
@@ -68,11 +62,11 @@ public class ScenarioManager {
                                 var scenario = (BaseScenario) con.newInstance(annotation.name(),
                                         annotation.description());
                                 scenarios.put(scenario, false);
-                                log.info(String.format("Registered scenario \nname=%s, \ndescription%s, \nui=%s",
+                                log.info(String.format("Registered scenario{\nname=%s, \ndescription=%s, \nui=%s}.\n",
                                         annotation.name(), annotation.description(), annotation.ui()));
                             } catch (Exception e) {
                                 log.error(
-                                        String.format("Failed to register scenario \nname=%s, \ndescription%s, \nui=%s",
+                                        String.format("Failed to register scenario{\nname=%s, \ndescription=%s, \nui=%s}.\n",
                                                 annotation.name(), annotation.description(), annotation.ui()));
                                 e.printStackTrace();
                             }
