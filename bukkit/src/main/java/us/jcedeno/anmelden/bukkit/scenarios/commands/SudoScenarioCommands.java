@@ -64,7 +64,7 @@ public class SudoScenarioCommands {
     }
 
     private static enum ScenarioArgument {
-        CUTCLEAN, TIMEBOMB, FIRELESS;
+        CUTCLEAN, FIRELESS;
     }
 
     /**
