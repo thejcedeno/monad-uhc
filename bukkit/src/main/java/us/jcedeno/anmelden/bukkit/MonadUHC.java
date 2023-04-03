@@ -11,8 +11,8 @@ import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
-import fr.mrmicky.fastinv.FastInvManager;
 import lombok.Getter;
+import us.jcedeno.anmelden.bukkit._utils.fastinv.FastInvManager;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
 /**
@@ -21,19 +21,23 @@ import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
  * @author jcedeno and his beautiful gf.
  */
 public class MonadUHC extends JavaPlugin {
-    private static MonadUHC instance;
+    protected static MonadUHC instance;
     /** Command Manager for cloud framework */
     private @Getter PaperCommandManager<CommandSender> paperCommandManager;
     private @Getter AnnotationParser<CommandSender> annotationParser;
     /** Managers */
     private @Getter ScenarioManager scenarioManager;
 
+    /**
+     * @return The instance of the MonadUHC plugin.
+     */
     public static MonadUHC instance() {
         return MonadUHC.instance;
     }
 
     @Override
     public void onEnable() {
+        /** Set the plugin instance to the current. */
         MonadUHC.instance = this;
         /** Register FastInv */
         FastInvManager.register(this);
@@ -63,10 +67,12 @@ public class MonadUHC extends JavaPlugin {
         /** Register Game Related Managers */
         this.scenarioManager = new ScenarioManager(this);
 
-        // Construct commands
         constructCommands();
     }
 
+    /**
+     * A method that constructs all the cloud framework commands.
+     */
     private void constructCommands() {
         // Parse all @CommandMethod-annotated methods
         this.annotationParser.parse(this);
@@ -76,10 +82,6 @@ public class MonadUHC extends JavaPlugin {
         } catch (final Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onDisable() {
     }
 
 }
