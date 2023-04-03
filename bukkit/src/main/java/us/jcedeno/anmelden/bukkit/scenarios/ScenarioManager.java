@@ -30,16 +30,20 @@ public class ScenarioManager {
      * @param instance The instance of the plugin.
      */
     public ScenarioManager(final MonadUHC instance) {
-        /**
-         * The following might look like black magic, but I promise it isn't. It's just
-         * reflections and annotation processing.
-         * 
-         * Basically, this code allows other devs to create and register new scenarios
-         * by creating a class under the scenarios/impl folder that extends BaseScenario
-         * and annotating it with @Scenario.
-         * 
-         * TODO: Refactor this clusterf of a method
-         */
+        this.autoRegisterScenarios();
+    }
+
+    /**
+     * The following might look like black magic, but I promise it isn't. It's just
+     * reflections and annotation processing.
+     * 
+     * Basically, this code allows other devs to create and register new scenarios
+     * by creating a class under the scenarios/impl folder that extends BaseScenario
+     * and annotating it with @Scenario.
+     * 
+     * TODO: Refactor this clusterf of a method
+     */
+    public void autoRegisterScenarios() {
         GlobalUtils.findAnnotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
                 .forEach(sc -> {
                     // Check if class is of base scenario type.
@@ -93,7 +97,6 @@ public class ScenarioManager {
 
                     }
                 });
-
     }
 
     /**
@@ -186,7 +189,7 @@ public class ScenarioManager {
     public boolean disableScenario(BaseScenario scenario) {
         // Throw an exception if the scenario is not enabled.
         var scenarioStatus = scenarios.get(scenario);
-        
+
         if (!scenarioStatus) {
             log.info("Scenario not enabled. " + scenario.name() + ", " + scenarioStatus);
             throw new RuntimeException("Scenario not enabled");

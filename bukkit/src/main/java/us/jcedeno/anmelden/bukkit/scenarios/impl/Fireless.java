@@ -57,7 +57,7 @@ public class Fireless extends BaseScenario implements Listener {
      */
     @Override
     public void disable() {
-        log.info("[❌] Fireless scenario disabled");
+        log.info("[❌] Cutclean scenario disabled");
     }
 
 }
