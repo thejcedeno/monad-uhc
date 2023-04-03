@@ -33,6 +33,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +69,7 @@ public class FastInv implements InventoryHolder {
      * @param size The size of the inventory.
      */
     public FastInv(int size) {
-        this(size, InventoryType.CHEST.getDefaultTitle());
+        this(size, MiniMessage.miniMessage().deserialize(InventoryType.CHEST.getDefaultTitle()));
     }
 
     /**
@@ -75,7 +78,7 @@ public class FastInv implements InventoryHolder {
      * @param size  The size of the inventory.
      * @param title The title (name) of the inventory.
      */
-    public FastInv(int size, String title) {
+    public FastInv(int size, Component title) {
         this(size, InventoryType.CHEST, title);
     }
 
@@ -85,7 +88,7 @@ public class FastInv implements InventoryHolder {
      * @param type The type of the inventory.
      */
     public FastInv(InventoryType type) {
-        this(Objects.requireNonNull(type, "type"), type.getDefaultTitle());
+        this(Objects.requireNonNull(type, "type"), MiniMessage.miniMessage().deserialize(type.getDefaultTitle()));
     }
 
     /**
@@ -94,11 +97,11 @@ public class FastInv implements InventoryHolder {
      * @param type  The type of the inventory.
      * @param title The title of the inventory.
      */
-    public FastInv(InventoryType type, String title) {
+    public FastInv(InventoryType type, Component title) {
         this(0, Objects.requireNonNull(type, "type"), title);
     }
 
-    private FastInv(int size, InventoryType type, String title) {
+    private FastInv(int size, InventoryType type, Component title) {
         if (type == InventoryType.CHEST && size > 0) {
             this.inventory = Bukkit.createInventory(this, size, title);
         } else {

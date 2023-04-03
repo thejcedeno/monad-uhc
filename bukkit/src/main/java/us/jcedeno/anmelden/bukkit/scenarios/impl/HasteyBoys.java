@@ -17,7 +17,7 @@ import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
 
-@Scenario(name = "HasteBoys", description = "Tools come pre-enchanted\nwith efficiency 3 and unbreaking 3.", ui = Material.DIAMOND_PICKAXE)
+@Scenario(name = "<bold><gold>HasteBoys", description = "<white>Tools come pre-enchanted\n<white>with efficiency 3 and unbreaking 3.", ui = Material.DIAMOND_PICKAXE)
 public class HasteyBoys extends ListenerScenario {
 
     public HasteyBoys(String name, String description, Material material) {

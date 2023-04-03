@@ -3,6 +3,7 @@ package us.jcedeno.anmelden.bukkit.scenarios.commands;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,7 +37,8 @@ public final class ScenarioCommands {
         }
 
         if (sender instanceof Player player) {
-            var inv = new FastInv(InventoryType.HOPPER, "Scenarios");
+            var inv = new FastInv(InventoryType.HOPPER, miniMessage()
+                    .deserialize(String.format("<green>Enabled Scenarios(%s): ", enabledScenarios.size())));
 
             enabledScenarios.forEach(scenario -> inv.addItem(getScenarioItem(scenario), e -> {
                 e.getWhoClicked().sendMessage("You clicked on the scenario " + scenario.name());
@@ -47,16 +49,16 @@ public final class ScenarioCommands {
         }
 
         sender.sendMessage(miniMessage().deserialize("<green>Enabled Scenarios:"));
-            MonadUHC.instance().getScenarioManager().enabledScenarios()
-                    .forEach(scenario -> sender.sendMessage("- " + scenario.name()));
+        MonadUHC.instance().getScenarioManager().enabledScenarios()
+                .forEach(scenario -> sender.sendMessage("- " + scenario.name()));
     }
 
     public static ItemStack getScenarioItem(BaseScenario scenario) {
         var item = new ItemStack(scenario.material());
         var meta = item.getItemMeta();
-        
+
         meta.displayName(miniMessage().deserialize(scenario.name()));
-        meta.lore(List.of(miniMessage().deserialize(scenario.description())));
+        meta.lore(Stream.of(scenario.description().split("\n")).map(m -> miniMessage().deserialize(m)).toList());
         item.setItemMeta(meta);
 
         return item;
