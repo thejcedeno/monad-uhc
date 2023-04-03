@@ -49,7 +49,7 @@ public class ScenarioManager {
         String packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
         System.out.println("Package name: " + packageName);
 
-        GlobalUtils.getClassesFromPackage(packageName).stream()
+        GlobalUtils.findAllClassesUsingGoogleGuice(packageName).stream()
                 .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
         
 

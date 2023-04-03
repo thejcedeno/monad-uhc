@@ -1,8 +1,13 @@
 package us.jcedeno.anmelden.bukkit._utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.google.common.reflect.ClassPath;
 
 import lombok.SneakyThrows;
 
@@ -25,7 +30,7 @@ public class GlobalUtils {
     }
 
     /**
-     * A utility function to get all the classes from a package.    
+     * A utility function to get all the classes from a package.
      * 
      * @param packageName The package name to get the classes from.
      * @return A list of all the classes in the package.
@@ -57,5 +62,15 @@ public class GlobalUtils {
             }
         }
         return list;
+    }
+
+    public static Set<Class<?>> findAllClassesUsingGoogleGuice(String packageName) throws IOException {
+        return ClassPath.from(ClassLoader.getSystemClassLoader())
+                .getAllClasses()
+                .stream()
+                .filter(clazz -> clazz.getPackageName()
+                        .equalsIgnoreCase(packageName))
+                .map(clazz -> clazz.load())
+                .collect(Collectors.toSet());
     }
 }
