@@ -26,8 +26,6 @@ import us.jcedeno.anmelden.bukkit.MonadUHC;
 @CommandContainer
 @Log4j2
 public class SudoScenarioCommands {
-
-
     /**
      * Enables a scenario.
      * 
@@ -73,7 +71,9 @@ public class SudoScenarioCommands {
     }
 
     /**
-     * A function to automatically toggle off or on a scenario.
+     * Toggles a scenario.
+     * @param sender the command sender.
+     * @param scenario the scenario to toggle.
      */
     @CommandPermission("anmelden.scenarios.admin")
     @CommandMethod("sscenario toggle <scenario>")

@@ -24,8 +24,6 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 /**
  * A scenario that automatically smelts ores and food.
  * 
- * TODO: Add a config file to allow the user to change the xp multiplier.
- * 
  * @author thejcedeno.
  */
 @Log4j2
