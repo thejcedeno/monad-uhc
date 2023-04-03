@@ -28,8 +28,8 @@ dependencies {
     implementation "cloud.commandframework:cloud-paper:${versions.cloudPaper}"
     /** Import Minimessage */
     implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
-    /** Import BurningWave */
-    implementation 'org.burningwave:core:12.62.7'
+
+    
 }
 
 def branch() {

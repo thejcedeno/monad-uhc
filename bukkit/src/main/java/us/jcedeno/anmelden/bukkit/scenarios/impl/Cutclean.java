@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
 /**
@@ -28,6 +29,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
  * @author thejcedeno.
  */
 @Log4j2
+@Scenario(name = "Cutclean", description = "All ores and food are automatically smelted", ui = Material.IRON_INGOT)
 public class Cutclean extends BaseScenario implements Listener {
 
     /**

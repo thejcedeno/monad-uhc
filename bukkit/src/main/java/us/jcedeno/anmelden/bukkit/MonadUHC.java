@@ -112,7 +112,6 @@ public class MonadUHC extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        System.out.println("bye bye");
     }
 
 }
