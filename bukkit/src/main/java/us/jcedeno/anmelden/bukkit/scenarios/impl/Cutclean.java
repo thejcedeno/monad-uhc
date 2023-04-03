@@ -18,7 +18,6 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.annotations.processing.CommandContainer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -33,8 +32,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
  * @author thejcedeno.
  */
 @Log4j2
-@CommandContainer
-//@Scenario(name = "Cutclean", description = "All ores and food are automatically smelted", ui = Material.IRON_INGOT)
+@Scenario(name = "Cutclean", description = "All ores and food are automatically smelted", ui = Material.IRON_INGOT)
 public class Cutclean extends BaseScenario implements Listener {
 
     public Cutclean(final @NonNull AnnotationParser<CommandSender> annotationParser) {
