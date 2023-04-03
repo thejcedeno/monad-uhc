@@ -29,6 +29,15 @@ public class ScenarioManager {
         }
     };
 
+    public static void main(String[] args) {
+        
+        String packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
+        System.out.println("Package name: " + packageName);
+
+        GlobalUtils.getClassesFromPackage(packageName).stream()
+                .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
+    }
+
     /**
      * Constructor for the ScenarioManager class.
      * 
@@ -37,12 +46,13 @@ public class ScenarioManager {
     @SneakyThrows
     public ScenarioManager(final MonadUHC instance) {
         this.registerScenarios();
-
-        String packageName = this.getClass().getPackageName() + ".impl";
-        log.info("Package name: " + packageName);
+        String packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
+        System.out.println("Package name: " + packageName);
 
         GlobalUtils.getClassesFromPackage(packageName).stream()
-                .forEach(sc -> log.info("Scenario name is " + sc.getName()));
+                .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
+        
+
 
     }
 
