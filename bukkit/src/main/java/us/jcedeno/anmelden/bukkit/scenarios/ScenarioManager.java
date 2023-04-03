@@ -29,21 +29,6 @@ public class ScenarioManager {
         }
     };
 
-    public static void main(String[] args) {
-
-        String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
-        try {
-            GlobalUtils.findAnnotatedClasses(packageName, Scenario.class).stream()
-                    .forEach(sc -> {
-                        System.out.println("Scenario name is " + sc.getName());
-                        log.info("Scenario name is " + sc.getName());
-                    });
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
     /**
      * Constructor for the ScenarioManager class.
      * 
@@ -51,14 +36,14 @@ public class ScenarioManager {
      */
     public ScenarioManager(final MonadUHC instance) {
         // this.registerScenarios();
-        String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
-        log.info("sssss Package name: " + packageName);
-        try {
-            GlobalUtils.findAnnotatedClasses(packageName, Scenario.class).stream()
-                    .forEach(sc -> log.info("Scenario name is " + sc.getName()));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        GlobalUtils.findAnnotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
+                .forEach(sc -> {
+                    log.info("Auto-Detected Scenario name is " + sc.getName());
+                    var annotation = sc.getAnnotation(Scenario.class);
+
+                    log.info(String.format("Registering scenario \nname=%s, \ndescription%s, \nui=%s",
+                            annotation.name(), annotation.description(), annotation.ui()));
+                });
 
     }
 
