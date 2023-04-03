@@ -1,10 +1,10 @@
 package us.jcedeno.anmelden.bukkit._utils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.SneakyThrows;
 
 public class GlobalUtils {
 
@@ -19,33 +19,43 @@ public class GlobalUtils {
             return object;
         }
 
-        public String getSerialized(){
+        public String getSerialized() {
             return object.toString();
         }
     }
 
+    /**
+     * A utility function to get all the classes from a package.    
+     * 
+     * @param packageName The package name to get the classes from.
+     * @return A list of all the classes in the package.
+     */
+    @SneakyThrows
+    public static List<Class<?>> getClassesFromPackage(String packageName) {
+        var classLoader = Thread.currentThread().getContextClassLoader();
+        var path = packageName.replace('.', '/');
 
-    public static class AccessingAllClassesInPackage {
+        var list = new ArrayList<Class<?>>();
+        var resources = classLoader.getResources(path);
 
-    public Set<Class> findAllClassesUsingClassLoader(String packageName) {
-        InputStream stream = ClassLoader.getSystemClassLoader()
-          .getResourceAsStream(packageName.replaceAll("[.]", "/"));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        return reader.lines()
-          .filter(line -> line.endsWith(".class"))
-          .map(line -> getClass(line, packageName))
-          .collect(Collectors.toSet());
-    }
- 
-    private Class getClass(String className, String packageName) {
-        try {
-            return Class.forName(packageName + "."
-              + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException e) {
-            // handle the exception
+        while (resources.hasMoreElements()) {
+            var resource = resources.nextElement();
+            if (resource.getProtocol().equals("file")) {
+                var directory = new File(resource.toURI());
+                if (directory.exists()) {
+                    var files = directory.listFiles();
+                    for (var file : files) {
+                        if (file.isFile() && file.getName().endsWith(".class")) {
+                            String className = packageName + '.'
+                                    + file.getName().substring(0, file.getName().length() - 6);
+                            Class<?> clazz = Class.forName(className);
+
+                            list.add(clazz);
+                        }
+                    }
+                }
+            }
         }
-        return null;
+        return list;
     }
-}
-
 }

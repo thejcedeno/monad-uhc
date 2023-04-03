@@ -1,8 +1,5 @@
 package us.jcedeno.anmelden.bukkit.scenarios;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +12,7 @@ import org.bukkit.event.Listener;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
+import us.jcedeno.anmelden.bukkit._utils.GlobalUtils;
 import us.jcedeno.anmelden.bukkit.scenarios.impl.Cutclean;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
@@ -31,118 +29,6 @@ public class ScenarioManager {
         }
     };
 
-
-        /**
-     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
-     *
-     * @param packageName The base package
-     * @return The classes
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    private static Class<?>[] getClasses(String packageName)
-            throws ClassNotFoundException, IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        assert classLoader != null;
-        String path = packageName.replace('.', '/');
-        var resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<File>();
-        while (resources.hasMoreElements()) {
-            var resource = resources.nextElement();
-            dirs.add(new File(resource.getFile()));
-        }
-        var classes = new ArrayList<Class<?>>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes.toArray(new Class[classes.size()]);
-    }
-
-    /**
-     * Recursive method used to find all classes in a given directory and subdirs.
-     *
-     * @param directory   The base directory
-     * @param packageName The package name for classes found inside the base directory
-     * @return The classes
-     * @throws ClassNotFoundException
-     */
-    private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        var classes = new ArrayList<Class<?>>();
-        if (!directory.exists()) {
-            return classes;
-        }
-        File[] files = directory.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
-            }
-        }
-        return classes;
-    }
-
-    public static void main(String[] args) {
-        var packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
-
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String path = packageName.replace('.', '/');
-            var resources = classLoader.getResources(path);
-            while (resources.hasMoreElements()) {
-                var resource = resources.nextElement();
-                if (resource.getProtocol().equals("file")) {
-                    var directory = new File(resource.toURI());
-                    if (directory.exists()) {
-                        var files = directory.listFiles();
-                        for (var file : files) {
-                            if (file.isFile() && file.getName().endsWith(".class")) {
-                                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-                                Class<?> clazz = Class.forName(className);
-
-                                if(clazz.getAnnotations().length > 0)
-                                    System.out.println("Scenarios with annotations: " + clazz.getName());
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-    }
-
-    public static List<Class<?>> getClassesInPackage(String packageName) {
-        log.info("Getting classes in package: " + packageName);
-        List<Class<?>> classes = new ArrayList<>();
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String path = packageName.replace('.', '/');
-            var resources = classLoader.getResources(path);
-            while (resources.hasMoreElements()) {
-                var resource = resources.nextElement();
-                var file = new File(resource.getFile());
-                if (file.isDirectory()) {
-                    var files = file.listFiles();
-                    for (var childFile : files) {
-                        var childPath = packageName + "." + childFile.getName().replace(".class", "");
-                        try {
-                            classes.add(Class.forName(childPath));
-                        } catch (ClassNotFoundException e) {
-                            // Handle the exception as per your use case
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // Handle the exception as per your use case
-            e.printStackTrace();
-        }
-        return classes;
-    }
-
     /**
      * Constructor for the ScenarioManager class.
      * 
@@ -155,15 +41,8 @@ public class ScenarioManager {
         String packageName = this.getClass().getPackageName() + ".impl";
         log.info("Package name: " + packageName);
 
-        // Using burningwave to find all the classes in the package.
-        List<Class<?>> scenarios = List.of(getClasses(packageName));
-
-        System.out.println("SCENARIOS: " + scenarios.size());
-
-        scenarios.forEach(clz -> {
-            log.info("FOUND SCENARIO Class: " + clz.getName());
-
-        });
+        GlobalUtils.getClassesFromPackage(packageName).stream()
+                .forEach(sc -> log.info("Scenario name is " + sc.getName()));
 
     }
 
