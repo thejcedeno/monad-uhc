@@ -57,6 +57,7 @@ public final class ScenarioCommands {
         
         meta.displayName(miniMessage().deserialize(scenario.name()));
         meta.lore(List.of(miniMessage().deserialize(scenario.description())));
+        item.setItemMeta(meta);
 
         return item;
     }
