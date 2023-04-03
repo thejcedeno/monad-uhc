@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit._utils.GlobalUtils;
+import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.impl.Cutclean;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
@@ -31,10 +32,16 @@ public class ScenarioManager {
     public static void main(String[] args) {
 
         String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
-        System.out.println("Package name: " + packageName);
+        try {
+            GlobalUtils.findAnnotatedClasses(packageName, Scenario.class).stream()
+                    .forEach(sc -> {
+                        System.out.println("Scenario name is " + sc.getName());
+                        log.info("Scenario name is " + sc.getName());
+                    });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
-        GlobalUtils.getClassesFromPackage(packageName).stream()
-                .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
     }
 
     /**
@@ -43,12 +50,12 @@ public class ScenarioManager {
      * @param instance The instance of the plugin.
      */
     public ScenarioManager(final MonadUHC instance) {
-        this.registerScenarios();
+        // this.registerScenarios();
         String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
-        System.out.println("Package name: " + packageName);
+        log.info("sssss Package name: " + packageName);
         try {
-            GlobalUtils.findAllClassesUsingGoogleGuice(packageName).stream()
-                    .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
+            GlobalUtils.findAnnotatedClasses(packageName, Scenario.class).stream()
+                    .forEach(sc -> log.info("Scenario name is " + sc.getName()));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

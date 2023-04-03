@@ -2,12 +2,17 @@ package us.jcedeno.anmelden.bukkit._utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.reflections.Reflections;
+import java.util.Set;
+
 import com.google.common.reflect.ClassPath;
+import com.google.common.reflect.ClassPath.ClassInfo;
 
 import lombok.SneakyThrows;
 
@@ -65,12 +70,22 @@ public class GlobalUtils {
     }
 
     public static Set<Class<?>> findAllClassesUsingGoogleGuice(String packageName) throws IOException {
-        return ClassPath.from(ClassLoader.getSystemClassLoader())
-                .getAllClasses()
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassPath classPath = ClassPath.from(classLoader);
+        Set<Class<?>> classes = classPath.getTopLevelClassesRecursive(packageName)
                 .stream()
-                .filter(clazz -> clazz.getPackageName()
-                        .equalsIgnoreCase(packageName))
-                .map(clazz -> clazz.load())
+                .map(ClassInfo::load)
                 .collect(Collectors.toSet());
+        return classes;
+
     }
+
+    public static Set<Class<?>> findAnnotatedClasses(String packageName, Class<? extends Annotation> annotationClass) {
+    Reflections reflections = new Reflections(packageName);
+    Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(annotationClass);
+    return annotatedClasses;
+}
+
+
+    
 }
