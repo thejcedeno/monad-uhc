@@ -30,43 +30,62 @@ public class ScenarioManager {
      * @param instance The instance of the plugin.
      */
     public ScenarioManager(final MonadUHC instance) {
-        // this.registerScenarios();
+        /**
+         * The following might look like black magic, but I promise it isn't. It's just
+         * reflections and annotation processing.
+         * 
+         * Basically, this code allows other devs to create and register new scenarios
+         * by creating a class under the scenarios/impl folder that extends BaseScenario
+         * and annotating it with @Scenario.
+         * 
+         * TODO: Refactor this clusterf of a method
+         */
         GlobalUtils.findAnnotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
                 .forEach(sc -> {
-
                     // Check if class is of base scenario type.
                     if (!BaseScenario.class.isAssignableFrom(sc)) {
                         log.warn(String.format("Class %s is not a subclass of BaseScenario.", sc.getName()));
                         return;
                     }
-
+                    // Check if class has Scenario annotation
                     var annotation = sc.getAnnotation(Scenario.class);
 
                     if (annotation != null) {
                         log.info(String.format("Attempting to register scenario from class %s.", sc.getName()));
 
+                        /**
+                         * Get all the class's constructors to check if there is a constructor that
+                         * takes 2 strings (name, description).
+                         * 
+                         * TODO: Change this to 3 strings (name, description, ui-material)
+                         */
                         var constructors = sc.getDeclaredConstructors();
-
+                        // Add a label to the for loop so we can break out of it.
                         out: for (var con : constructors) {
                             var params = con.getParameters();
-
+                            // Params length can only be 2 for name and decription.
                             if (params.length != 2)
                                 continue out;
 
+                            // If the type of the current constructor isn't String, then exit early.
                             for (var param : params)
                                 if (param.getType() != String.class)
                                     continue out;
 
-                            // Invoke the constructor
+                            // Invoke the constructor and register the scenario with the scenario manager.
                             try {
                                 var scenario = (BaseScenario) con.newInstance(annotation.name(),
                                         annotation.description());
+                                // Add it to the scenarios hashset as disabled.
+                                // TODO: Make the init method do this automatically?
                                 scenarios.put(scenario, false);
-                                log.info(String.format("Registered scenario{\nname=%s, \ndescription=%s, \nui=%s}.\n",
+                                // Log the registration.
+                                log.info(String.format("Registered scenario {\nname=%s, \ndescription=%s, \nui=%s\n}.",
                                         annotation.name(), annotation.description(), annotation.ui()));
                             } catch (Exception e) {
                                 log.error(
-                                        String.format("Failed to register scenario{\nname=%s, \ndescription=%s, \nui=%s}.\n",
+                                        String.format(
+                                                "Failed to register scenario {\nname=%s, \ndescription=%s, \nui=%s\n}.",
                                                 annotation.name(), annotation.description(), annotation.ui()));
                                 e.printStackTrace();
                             }
@@ -117,14 +136,6 @@ public class ScenarioManager {
     }
 
     /**
-     * Function that handles all the scenario registration to make the gamemode
-     * modifiers available.
-     */
-    protected void registerScenarios() {
-        this.scenarios.keySet().forEach(BaseScenario::init);
-    }
-
-    /**
      * A utility function to enable a scenario by name.
      * *
      * 
@@ -138,6 +149,14 @@ public class ScenarioManager {
         return enableScenario(scenario);
     }
 
+    /**
+     * A utility function to enable a scenario.
+     * 
+     * @param scenario The scenario to enable.
+     * @throws RuntimeException If the scenario is already enabled.
+     * 
+     * @return True if the scenario was enabled, false otherwise.
+     */
     public boolean enableScenario(BaseScenario scenario) {
         // Throw an exception if the scenario is already enabled.
         if (scenarios.get(scenario))

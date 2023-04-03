@@ -19,6 +19,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import cloud.commandframework.annotations.AnnotationParser;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
@@ -44,13 +45,6 @@ public class Cutclean extends BaseScenario implements Listener {
     private static Random random = new Random();
 
     /**
-     * Static constructor for the Cutclean scenario.
-     */
-    public static Cutclean create() {
-        return new Cutclean("Cutclean", "All ores and food are automatically smelted");
-    }
-
-    /**
      * Constructor for the Cutclean scenario.
      * 
      * @param name        The name of the scenario.
@@ -58,6 +52,7 @@ public class Cutclean extends BaseScenario implements Listener {
      */
     public Cutclean(String name, String description) {
         super(name, description);
+        // Optional
         this.init();
     }
 
