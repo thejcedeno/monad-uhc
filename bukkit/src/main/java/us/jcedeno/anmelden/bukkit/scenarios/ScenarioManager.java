@@ -31,6 +31,7 @@ public class ScenarioManager {
      */
     public ScenarioManager(final MonadUHC instance) {
         this.autoRegisterScenarios();
+
     }
 
     /**
