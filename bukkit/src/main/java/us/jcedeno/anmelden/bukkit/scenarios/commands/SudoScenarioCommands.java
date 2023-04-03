@@ -82,14 +82,14 @@ public class SudoScenarioCommands {
         log.debug("Toggling scenario: {}", scenario);
         var scenarioManager = MonadUHC.instance().getScenarioManager();
 
-        var toggled = scenarioManager.getScenarioFromStr(scenario.toString()).toggle(scenarioManager);
+        var toggled = !scenarioManager.getScenarioFromStr(scenario.toString()).toggle(scenarioManager);
         log.info("Scenario {} has been toggled to {}", scenario, toggled);
 
         // Send pretty message to user
         if (sender instanceof Player p) {
             p.sendMessage(MiniMessage.miniMessage().deserialize(
                     String.format("<yellow><white><bold>%s</bold></white> has been <bold>%s.</bold>", scenario,
-                            !toggled ? "<green>enabled</green>" : "<red>disabled</red>")));
+                            toggled ? "<green>enabled</green>" : "<red>disabled</red>")));
         } else {
             sender.sendMessage(String.format("Scenario %s has been", scenario));
         }

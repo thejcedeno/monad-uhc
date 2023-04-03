@@ -59,12 +59,6 @@ public class ScenarioManager {
                     if (annotation != null) {
                         log.info(String.format("Attempting to register scenario from class %s.", sc.getName()));
 
-                        /**
-                         * Get all the class's constructors to check if there is a constructor that
-                         * takes 2 strings (name, description).
-                         * 
-                         * TODO: Change this to 3 strings (name, description, ui-material)
-                         */
                         var constructors = sc.getDeclaredConstructors();
                         // Add a label to the for loop so we can break out of it.
                         out: for (var con : constructors) {

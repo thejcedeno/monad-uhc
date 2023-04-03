@@ -16,7 +16,7 @@ public class InstantiatedScenario extends BaseScenario {
      */
     @Override
     public void enable() {
-        log.info("[✅] " + this.name() + " scenario enabled");
+        log.info("[✅] " + this.name() + " scenario enabled.");
     }
 
     /**
@@ -24,7 +24,7 @@ public class InstantiatedScenario extends BaseScenario {
      */
     @Override
     public void disable() {
-        log.info("[❌] " + this.name() + " scenario disabled");
+        log.info("[❌] " + this.name() + " scenario disabled.");
     }
     
 }
