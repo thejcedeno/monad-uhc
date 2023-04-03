@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit._utils.GlobalUtils;
@@ -30,8 +29,8 @@ public class ScenarioManager {
     };
 
     public static void main(String[] args) {
-        
-        String packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
+
+        String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
         System.out.println("Package name: " + packageName);
 
         GlobalUtils.getClassesFromPackage(packageName).stream()
@@ -43,16 +42,16 @@ public class ScenarioManager {
      * 
      * @param instance The instance of the plugin.
      */
-    @SneakyThrows
     public ScenarioManager(final MonadUHC instance) {
         this.registerScenarios();
-        String packageName ="us.jcedeno.anmelden.bukkit.scenarios.impl";
+        String packageName = "us.jcedeno.anmelden.bukkit.scenarios.impl";
         System.out.println("Package name: " + packageName);
-
-        GlobalUtils.findAllClassesUsingGoogleGuice(packageName).stream()
-                .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
-        
-
+        try {
+            GlobalUtils.findAllClassesUsingGoogleGuice(packageName).stream()
+                    .forEach(sc -> System.out.println("Scenario name is " + sc.getName()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
     }
 
