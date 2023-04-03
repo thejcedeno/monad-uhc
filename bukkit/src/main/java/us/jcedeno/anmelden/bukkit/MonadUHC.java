@@ -16,32 +16,9 @@ import lombok.Getter;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
 /**
- * The entry point of the Bukkit side of the Anmelden Project.
+ * The entry point of the Monad UHC plugin.
  * 
- * <p>
- * <h3>Resources for development:</h3>
- * <ul>
- * 
- * <li>Minimessage viewer
- * <a href= "https://webui.adventure.kyori.net/">here<a/>.
- * </li>
- * 
- * <li>Minimessage Documentation
- * <a href= "https://docs.adventure.kyori.net/minimessage">here<a/>.
- * </li>
- * 
- * <li>Cloud Framework Documentation
- * <a href= "https://incendo.github.io/cloud/">here<a/>.
- * </li>
- * 
- * </ul>
- * </p>
- * 
- * <p>
- * For further details, contact develop at jcedeno@hynix.studio
- * </p>
- * 
- * @author jcedeno and her gf
+ * @author jcedeno and his beautiful gf.
  */
 public class MonadUHC extends JavaPlugin {
     private static MonadUHC instance;
