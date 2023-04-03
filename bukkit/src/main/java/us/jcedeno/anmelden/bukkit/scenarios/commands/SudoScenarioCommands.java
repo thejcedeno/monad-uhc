@@ -27,13 +27,6 @@ import us.jcedeno.anmelden.bukkit.MonadUHC;
 @Log4j2
 public class SudoScenarioCommands {
 
-    @Suggestions("scenarios")
-    public @NonNull List<String> getRegisteredScenarios(
-            final @NonNull CommandContext<CommandSender> ctx,
-            final @NonNull String input) {
-        return MonadUHC.instance().getScenarioManager().getScenariosMap().entrySet().stream()
-                .map((entry) -> entry.getValue().name()).collect(Collectors.toList());
-    }
 
     /**
      * Enables a scenario.
@@ -112,4 +105,15 @@ public class SudoScenarioCommands {
         log.debug("At this point, cloud injects the command.");
     }
 
+    /**
+     * A function used by cloud to register command completions from the scenarios
+     * argument.
+     */
+    @Suggestions("scenarios")
+    public @NonNull List<String> getRegisteredScenarios(
+            final @NonNull CommandContext<CommandSender> ctx,
+            final @NonNull String input) {
+        return MonadUHC.instance().getScenarioManager().getScenariosMap().entrySet().stream()
+                .map((entry) -> entry.getValue().name()).collect(Collectors.toList());
+    }
 }
