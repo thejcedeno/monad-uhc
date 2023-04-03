@@ -8,7 +8,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -17,18 +16,16 @@ import org.bukkit.util.Vector;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
-import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
+import us.jcedeno.anmelden.bukkit.scenarios.models.ListenerScenario;
 
 /**
  * A scenario that automatically smelts ores and food.
  * 
  * @author thejcedeno.
  */
-@Log4j2
 @Scenario(name = "Cutclean", description = "All ores and food are automatically smelted", ui = Material.IRON_INGOT)
-public class Cutclean extends BaseScenario implements Listener {
+public class Cutclean extends ListenerScenario {
     /**
      * Scenario properties and constants
      */
@@ -38,40 +35,8 @@ public class Cutclean extends BaseScenario implements Listener {
     private @Getter @Setter int netheriteXp = 5;
     private static Random random = new Random();
 
-    /**
-     * Constructor for the Cutclean scenario.
-     * 
-     * @param name        The name of the scenario.
-     * @param description The description of the scenario.
-     */
-    public Cutclean(String name, String description) {
-        super(name, description);
-        // Optional
-        this.init();
-    }
-
-    /**
-     * OPTIONAL
-     */
-    @Override
-    public void init() {
-        log.info("[☑] Cutclean scenario initialized");
-    }
-
-    /**
-     * REQUIRED
-     */
-    @Override
-    public void enable() {
-        log.info("[✅] Cutclean scenario enabled");
-    }
-
-    /**
-     * REQUIRED
-     */
-    @Override
-    public void disable() {
-        log.info("[❌] Cutclean scenario disabled");
+    public Cutclean(String name, String description, Material material) {
+        super(name, description, material);
     }
 
     /**

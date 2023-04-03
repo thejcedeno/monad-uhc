@@ -23,6 +23,7 @@ dependencies {
     /**Import incendo/cloud*/
     implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
+    implementation "cloud.commandframework:cloud-minecraft-extras:${versions.cloudPaper}"
     annotationProcessor "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-brigadier:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-paper:${versions.cloudPaper}"

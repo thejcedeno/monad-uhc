@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
@@ -68,19 +69,18 @@ public class ScenarioManager {
                         // Add a label to the for loop so we can break out of it.
                         out: for (var con : constructors) {
                             var params = con.getParameters();
-                            // Params length can only be 2 for name and decription.
-                            if (params.length != 2)
+                            // Params length can only be 3 for name and decription.
+                            if (params.length != 3)
                                 continue out;
 
                             // If the type of the current constructor isn't String, then exit early.
-                            for (var param : params)
-                                if (param.getType() != String.class)
-                                    continue out;
+                            if(params[0].getType() != String.class || params[1].getType() != String.class || params[2].getType() != Material.class)
+                                continue out;
 
                             // Invoke the constructor and register the scenario with the scenario manager.
                             try {
                                 var scenario = (BaseScenario) con.newInstance(annotation.name(),
-                                        annotation.description());
+                                        annotation.description(), annotation.ui());
                                 // Add it to the scenarios hashset as disabled.
                                 // TODO: Make the init method do this automatically?
                                 scenarios.put(scenario, false);

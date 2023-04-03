@@ -1,5 +1,7 @@
 package us.jcedeno.anmelden.bukkit.scenarios.models;
 
+import org.bukkit.Material;
+
 import lombok.AllArgsConstructor;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 
@@ -15,6 +17,7 @@ import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 public class BaseScenario implements IScenario {
     private String name;
     private String description;
+    private Material material;
 
     @Override
     public String name() {
@@ -24,6 +27,10 @@ public class BaseScenario implements IScenario {
     @Override
     public String description() {
         return this.description;
+    }
+
+    public Material material(){
+        return this.material;
     }
 
     @Override
