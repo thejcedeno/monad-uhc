@@ -1,5 +1,6 @@
 package us.jcedeno.anmelden.bukkit.scenarios;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,10 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.burningwave.core.assembler.ComponentContainer;
+import org.burningwave.core.classes.ClassCriteria;
+import org.burningwave.core.classes.SearchConfig;
+import org.burningwave.core.classes.SearchResult;
 
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
@@ -34,6 +39,26 @@ public class ScenarioManager {
      */
     public ScenarioManager(final MonadUHC instance) {
         this.registerScenarios();
+
+        String packageName = this.getClass().getPackageName() + ".impl";
+        log.info("Package name: " + packageName);
+
+        // Using burningwave to find all the classes in the package.
+        List<Class<?>> scenarios = new ArrayList<>();
+
+        try (var result = ComponentContainer.getInstance().getClassHunter()
+                .findBy(SearchConfig.forResources(packageName)
+                        .by(ClassCriteria.create().allThoseThatMatch((cls) -> cls.getAnnotations().length > 0))
+
+                )) {
+            scenarios.addAll(result.getClasses());
+        }
+
+        scenarios.forEach( clz -> {
+            log.info("FOUND SCENARIO Class: " + clz.getName());
+
+        });
+
     }
 
     /**

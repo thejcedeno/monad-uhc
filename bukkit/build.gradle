@@ -20,7 +20,7 @@ ext {
 dependencies {
     /** Import PaperMC */
     compileOnly paper(versions.paper)
-    /**Import Cloud Paper */
+    /**Import incendo/cloud*/
     implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
     annotationProcessor "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
@@ -28,6 +28,8 @@ dependencies {
     implementation "cloud.commandframework:cloud-paper:${versions.cloudPaper}"
     /** Import Minimessage */
     implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
+    /** Import BurningWave */
+    implementation 'org.burningwave:core:12.62.7'
 }
 
 def branch() {
