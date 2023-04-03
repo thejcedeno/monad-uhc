@@ -34,11 +34,6 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 @Log4j2
 @Scenario(name = "Cutclean", description = "All ores and food are automatically smelted", ui = Material.IRON_INGOT)
 public class Cutclean extends BaseScenario implements Listener {
-
-    public Cutclean(final @NonNull AnnotationParser<CommandSender> annotationParser) {
-        super(null, null);
-    }
-
     /**
      * Scenario properties and constants
      */
@@ -61,7 +56,7 @@ public class Cutclean extends BaseScenario implements Listener {
      * @param name        The name of the scenario.
      * @param description The description of the scenario.
      */
-    protected Cutclean(String name, String description) {
+    public Cutclean(String name, String description) {
         super(name, description);
         this.init();
     }

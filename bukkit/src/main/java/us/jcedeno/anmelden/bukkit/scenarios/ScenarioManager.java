@@ -38,11 +38,47 @@ public class ScenarioManager {
         // this.registerScenarios();
         GlobalUtils.findAnnotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
                 .forEach(sc -> {
-                    log.info("Auto-Detected Scenario name is " + sc.getName());
+
+                    // Check if class is of base scenario type.
+                    if (!BaseScenario.class.isAssignableFrom(sc)) {
+                        log.warn(String.format("Class %s is not a subclass of BaseScenario", sc.getName()));
+                        return;
+                    }
+
                     var annotation = sc.getAnnotation(Scenario.class);
 
-                    log.info(String.format("Registering scenario \nname=%s, \ndescription%s, \nui=%s",
-                            annotation.name(), annotation.description(), annotation.ui()));
+                    if (annotation != null) {
+                        log.info(String.format("Attempting to register scenario \nname=%s, \ndescription%s, \nui=%s",
+                                annotation.name(), annotation.description(), annotation.ui()));
+
+                        var constructors = sc.getDeclaredConstructors();
+
+                        out: for (var con : constructors) {
+                            var params = con.getParameters();
+
+                            if (params.length != 2)
+                                continue out;
+
+                            for (var param : params)
+                                if (param.getType() != String.class)
+                                    continue out;
+
+                            // Invoke the constructor
+                            try {
+                                var scenario = (BaseScenario) con.newInstance(annotation.name(),
+                                        annotation.description());
+                                scenarios.put(scenario, false);
+                                log.info(String.format("Registered scenario \nname=%s, \ndescription%s, \nui=%s",
+                                        annotation.name(), annotation.description(), annotation.ui()));
+                            } catch (Exception e) {
+                                log.error(
+                                        String.format("Failed to register scenario \nname=%s, \ndescription%s, \nui=%s",
+                                                annotation.name(), annotation.description(), annotation.ui()));
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
                 });
 
     }
