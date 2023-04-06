@@ -4,9 +4,12 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
+archivesBaseName = 'monad-uhc'
+
 repositories {
     mavenCentral()
     jitpack()
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
 }
 
 ext {
@@ -31,7 +34,13 @@ dependencies {
     implementation "net.kyori:adventure-text-minimessage:${versions.adventureTextMinimessage}"
     /** Import reflections */
     implementation 'org.reflections:reflections:0.10.2'
+    /** Import Mockbukkit */
 
+    // Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.19:2.144.3'
+    testImplementation 'org.assertj:assertj-core:3.24.1'
     
 }
 
