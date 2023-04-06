@@ -38,7 +38,7 @@ jobs:
         EOL
     # Build the project
     - name: Build with Gradle
-      run: ./gradlew :bukkit:clean :bukkit:build 
+      run: ./gradlew :bukkit:clean :bukkit:build :bukkit:test 
     # Publish to maven repository
     - name: Build with Gradle
       run: ./gradlew publish
