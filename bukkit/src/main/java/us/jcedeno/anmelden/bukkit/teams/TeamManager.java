@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -302,5 +303,27 @@ public class TeamManager {
     /**
      * Team Invite logic ends here
      */
+
+    /**
+     * A method that sends a message to all team members.
+     * 
+     * @param sender The player that is sending the message.
+     * @param msg    The message to send.
+     */
+    public void sendTeamMessage(Player sender, String msg) {
+        var team = this.teamByPlayer(sender.getUniqueId());
+        if (team == null) {
+            sender.sendMessage(miniMessage().deserialize("<red>You are not in a team."));
+            return;
+        }
+
+        this.getOnlineTeamMembers(team).forEach(player -> player.sendMessage(
+                miniMessage().deserialize("<white>[Team] <green>" + sender.getName() + "<white>: <#f3dbff>" + msg)));
+
+    }
+
+    public void kickPlayerFromTeam(Player sender, @Nullable Player player) {
+        throw new RuntimeException("Not implemented yet.");
+    }
 
 }

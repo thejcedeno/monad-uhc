@@ -13,7 +13,6 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.processing.CommandContainer;
 import cloud.commandframework.annotations.specifier.Greedy;
 import lombok.extern.log4j.Log4j2;
@@ -124,6 +123,31 @@ public class TeamCommands {
             return;
         }
         teamManager.rejectTeamInvite(sender, inviter);
+    }
+
+    @CommandMethod("team kick <target>")
+    @CommandDescription("Kicks a player from your team.")
+    public void teamKickCommand(final Player sender, final @Argument("target") OfflinePlayer target) {
+        if (!teamManager.hasTeam(sender.getUniqueId())) {
+            sender.sendMessage(miniMessage().deserialize("<red>You don't have a team."));
+            return;
+        }
+        if (!teamManager.hasTeam(target.getUniqueId())) {
+            sender.sendMessage(
+                    miniMessage().deserialize(String.format("<red>%s doesn't have a team.", target.getName())));
+            return;
+        }
+        teamManager.kickPlayerFromTeam(sender, target.getPlayer());
+    }
+
+    @CommandMethod("team chat <msg>")
+    @CommandDescription("Sends a message to your team.")
+    public void teamChatCommand(final Player sender, final @Argument("msg") String msg) {
+        if (!teamManager.hasTeam(sender.getUniqueId())) {
+            sender.sendMessage(miniMessage().deserialize("<red>You don't have a team."));
+            return;
+        }
+        teamManager.sendTeamMessage(sender, msg);
     }
 
     // Boiler plate code for the command framework.
