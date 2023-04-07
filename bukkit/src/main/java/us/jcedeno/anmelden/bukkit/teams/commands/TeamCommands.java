@@ -13,6 +13,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.processing.CommandContainer;
 import cloud.commandframework.annotations.specifier.Greedy;
 import lombok.extern.log4j.Log4j2;
@@ -41,6 +42,7 @@ public class TeamCommands {
     }
 
     @CommandMethod("team create [teamName]")
+    @ProxiedBy("tcreate")
     @CommandDescription("If the  sender doesn't have a team, it create it for them")
     public void createTeam(final @NonNull Player player,
             @Argument(value = "teamName", defaultValue = DEFAULT_TEAM_NAME) @Greedy String teamName) {
@@ -68,6 +70,7 @@ public class TeamCommands {
      * 
      */
     @CommandMethod("team disband")
+    @ProxiedBy("disband")
     @CommandDescription("Disbands the team of the player.")
     public void disbandTeam(final @NonNull Player player) {
         if (!teamManager.hasTeam(player.getUniqueId())) {
@@ -80,6 +83,7 @@ public class TeamCommands {
     }
 
     @CommandMethod("team invite <target>")
+    @ProxiedBy("invite")
     @CommandDescription("Invites a player to your team.")
     public void playerInviteCommand(final Player sender, final @Argument("target") OfflinePlayer target) {
         if (!teamManager.hasTeam(sender.getUniqueId())) {
@@ -96,6 +100,7 @@ public class TeamCommands {
     }
 
     @CommandMethod("team accept <inviter>")
+    @ProxiedBy("accept")
     @CommandDescription("Accepts a team invite.")
     public void teamAcceptCommand(final Player sender, final @Argument("inviter") Player inviter) {
         if (teamManager.hasTeam(sender.getUniqueId())) {
@@ -111,6 +116,7 @@ public class TeamCommands {
     }
 
     @CommandMethod("team deny <inviter>")
+    @ProxiedBy("reject")
     @CommandDescription("Denies a team invite.")
     public void teamDenyCommand(final Player sender, final @Argument("inviter") Player inviter) {
         if (teamManager.hasTeam(sender.getUniqueId())) {
@@ -141,8 +147,9 @@ public class TeamCommands {
     }
 
     @CommandMethod("team chat <msg>")
+    @ProxiedBy("tc")
     @CommandDescription("Sends a message to your team.")
-    public void teamChatCommand(final Player sender, final @Argument("msg") String msg) {
+    public void teamChatCommand(final Player sender, final @Argument("msg") @Greedy String msg) {
         if (!teamManager.hasTeam(sender.getUniqueId())) {
             sender.sendMessage(miniMessage().deserialize("<red>You don't have a team."));
             return;
