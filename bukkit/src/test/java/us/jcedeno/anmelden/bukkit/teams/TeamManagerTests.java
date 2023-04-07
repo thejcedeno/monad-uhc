@@ -1,11 +1,16 @@
 package us.jcedeno.anmelden.bukkit.teams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import com.google.gson.GsonBuilder;
+
+import lombok.extern.log4j.Log4j2;
 
 /**
  * A class to test the TeamManager class.
@@ -13,8 +18,9 @@ import org.junit.jupiter.api.Test;
  * @see TeamManager
  * @see Team
  * 
- * @author  thejcedeno
+ * @author thejcedeno
  */
+@Log4j2
 public class TeamManagerTests {
 
     private TeamManager teamManager = new TeamManager();
@@ -37,6 +43,23 @@ public class TeamManagerTests {
         assertEquals(3, team.allMembers().size());
     }
 
-    
+    @Test
+    @DisplayName("Creates a team manager, adds a few test teams and serializes and prints out serialized to console")
+    public void test_teamManagerSerialization_success() {
+
+        int i = 50;
+
+        while (i++ < 50) {
+            teamManager.createTeam(UUID.randomUUID(), UUID.randomUUID());
+        }
+
+        var gson = new GsonBuilder().setPrettyPrinting().create();
+
+        var json = gson.toJson(teamManager);
+
+        assertTrue(json.length() > 2, "The serialized output is valid");
+        System.out.println(String.format("Your serialized teamManager is: \n%s", json));
+
+    }
 
 }

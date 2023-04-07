@@ -27,7 +27,6 @@ public class TeamCommands {
 
     private static final String DEFAULT_TEAM_NAME = "DefaultTeamName";
 
-    @ProxiedBy("team list")
     @CommandMethod("teams")
     public void teams(final @NonNull CommandSender sender) {
         // If no teams, send a message saying that there are no teams
