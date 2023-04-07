@@ -14,6 +14,7 @@ import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import us.jcedeno.anmelden.bukkit._utils.fastinv.FastInvManager;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
+import us.jcedeno.anmelden.bukkit.teams.TeamManager;
 
 /**
  * The entry point of the Monad UHC plugin.
@@ -27,6 +28,7 @@ public class MonadUHC extends JavaPlugin {
     private @Getter AnnotationParser<CommandSender> annotationParser;
     /** Managers */
     private @Getter ScenarioManager scenarioManager;
+    private @Getter TeamManager teamManager;
 
     /**
      * @return The instance of the MonadUHC plugin.
@@ -66,6 +68,7 @@ public class MonadUHC extends JavaPlugin {
                 commandMetaFunction);
         /** Register Game Related Managers */
         this.scenarioManager = new ScenarioManager(this);
+        this.teamManager = new TeamManager();
 
         constructCommands();
     }

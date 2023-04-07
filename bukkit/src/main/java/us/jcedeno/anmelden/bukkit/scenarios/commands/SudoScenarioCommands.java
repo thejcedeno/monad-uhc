@@ -11,6 +11,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
+import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.processing.CommandContainer;
 import cloud.commandframework.annotations.suggestions.Suggestions;
 import cloud.commandframework.context.CommandContext;
@@ -33,6 +34,10 @@ public class SudoScenarioCommands {
      * @param scenario the scenario to enable.
      */
     @CommandPermission("anmelden.scenarios.admin")
+    // @ProxiedBy("scen <scenario>")
+    // Proxied By can only be used with literals. If we want to be able to parse
+    // this a a literal, we need a way to dynamically register a literal that holds
+    // the current registered scenarios as static
     @CommandMethod("sscenario enable <scenario>")
     public void enableScenario(final CommandSender sender,
             @Argument(value = "scenario", suggestions = "scenarios") final String scenario) {
@@ -72,7 +77,8 @@ public class SudoScenarioCommands {
 
     /**
      * Toggles a scenario.
-     * @param sender the command sender.
+     * 
+     * @param sender   the command sender.
      * @param scenario the scenario to toggle.
      */
     @CommandPermission("anmelden.scenarios.admin")

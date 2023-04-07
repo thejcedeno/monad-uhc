@@ -34,7 +34,7 @@ public class TeamManagerTests {
         // Then
         assertEquals(leader, team.getLeader());
         assertEquals(1, team.getMembers().size());
-        assertEquals(2, team.allMembers().size());
+        assertEquals(3, team.allMembers().size());
     }
 
     

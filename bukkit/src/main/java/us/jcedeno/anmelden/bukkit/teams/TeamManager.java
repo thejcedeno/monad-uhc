@@ -1,9 +1,16 @@
 package us.jcedeno.anmelden.bukkit.teams;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -19,11 +26,15 @@ import us.jcedeno.anmelden.bukkit.teams.models.Team;
  * - Adding members to teams
  * - Removing members from teams
  * - Sending team requests and handle the requests system
+ * 
+ * 
+ * @author thejcedeno
  */
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeamManager {
     protected Map<UUID, Team> teams = new HashMap<>();
+    // Lookup table, for constant lookup time.
     protected Map<UUID, Team> playerTeamLookup = new HashMap<>();
 
     /**
@@ -32,16 +43,19 @@ public class TeamManager {
      * This function also needs to update the player's team lookup table.
      * 
      * @param leader The leader of the team.
-     * @param member The member of the team.
+     * @param member The member(s) of the team.
      * 
      * @return The team that was created.
      */
-    public Team createTeam(UUID leader, UUID member) {
+    public Team createTeam(UUID leader, UUID... member) {
         var team = Team.leaderAndMemberTeam(leader, member);
 
         teams.put(team.getTeamId(), team);
         playerTeamLookup.put(leader, team);
-        playerTeamLookup.put(member, team);
+
+        if (member != null)
+            for (var m : member)
+                playerTeamLookup.put(m, team);
 
         return team;
     }
@@ -57,7 +71,7 @@ public class TeamManager {
 
         teams.remove(teamId);
         playerTeamLookup.remove(team.getLeader());
-        team.getMembers().forEach(member -> playerTeamLookup.remove(member));
+        team.getMembers().forEach(playerTeamLookup::remove);
         // TODO: Fire Bukkit Event in higher imlementation.
     }
 
@@ -83,6 +97,13 @@ public class TeamManager {
      */
     public Team teamByPlayer(UUID playerId) {
         return playerTeamLookup.get(playerId);
+    }
+
+    /**
+     * @return wether or not the player is in a team.
+     */
+    public boolean hasTeam(UUID playerId) {
+        return playerTeamLookup.containsKey(playerId);
     }
 
     /*
@@ -111,6 +132,23 @@ public class TeamManager {
 
         team.getMembers().remove(member);
         playerTeamLookup.remove(member);
+    }
+
+    private List<Player> getOnlineTeamMembers(Team team) {
+        return team.allMembers().stream().map(Bukkit::getPlayer).filter(player -> player != null)
+                .collect(Collectors.toList());
+    }
+
+    public void disbandTeam(Team team, Player player) {
+        if (team.getLeader() != player.getUniqueId()) {
+            player.sendMessage(miniMessage().deserialize("<red>You are not the leader of this team."));
+            return;
+        }
+
+        getOnlineTeamMembers(team).forEach(member -> member.sendMessage(
+                miniMessage().deserialize("<red>Your team has been disbanded by <white>" + player.getName() + ".")));
+
+        removeTeam(team.getTeamId());
     }
 
 }
