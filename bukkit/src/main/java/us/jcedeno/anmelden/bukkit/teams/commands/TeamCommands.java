@@ -9,6 +9,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.processing.CommandContainer;
 import cloud.commandframework.annotations.specifier.Greedy;
 import lombok.extern.log4j.Log4j2;
@@ -26,9 +27,19 @@ public class TeamCommands {
 
     private static final String DEFAULT_TEAM_NAME = "DefaultTeamName";
 
-    @CommandMethod("team")
-    public void team(final @NonNull CommandSender sender) {
-        sender.sendMessage("Team command");
+    @ProxiedBy("team list")
+    @CommandMethod("teams")
+    public void teams(final @NonNull CommandSender sender) {
+        //If no teams, send a message saying that there are no teams
+        if (teamManager.teams().isEmpty()) {
+            sender.sendMessage(miniMessage().deserialize("<red>There are no teams."));
+            return;
+        }
+        sender.sendMessage(miniMessage().deserialize("<green>Teams:"));
+        // Send a list of all the teams
+        teamManager.teams().forEach(team -> {
+            sender.sendMessage(miniMessage().deserialize(String.format("<white>%s</white>", team.getTeamName())));
+        });
     }
 
     @CommandMethod("team create [teamName]")
@@ -58,7 +69,6 @@ public class TeamCommands {
      * Disbands the team of the player.
      * 
      */
-
     @CommandMethod("team disband")
     @CommandDescription("Disbands the team of the player."	)
     public void disbandTeam(final @NonNull Player player) {
@@ -82,11 +92,12 @@ public class TeamCommands {
             sender.sendMessage(miniMessage().deserialize(String.format("<red>%s already has a team.", target.getName())));
             return;
         }
+        // TODO: Actually implement the team logic/
 
         sender.sendMessage(miniMessage().deserialize(String
                 .format("<green>You have invited <white><bold>%s</bold></white> to your team.", target.getName())));
-
     }
+    
 
     // Boiler plate code for the command framework.
     public TeamCommands(final @NonNull AnnotationParser<CommandSender> parser) {

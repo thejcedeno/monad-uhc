@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -33,9 +34,16 @@ import us.jcedeno.anmelden.bukkit.teams.models.Team;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeamManager {
-    protected Map<UUID, Team> teams = new HashMap<>();
+    protected volatile Map<UUID, Team> teams = new ConcurrentHashMap<>();
     // Lookup table, for constant lookup time.
-    protected Map<UUID, Team> playerTeamLookup = new HashMap<>();
+    protected volatile Map<UUID, Team> playerTeamLookup = new ConcurrentHashMap<>();
+    // Invites map
+    /**
+     * Team invites system, composed of:
+     * - /team invite <player> - executable from team leader only
+     * - /team <accept/join:reject/deny> <teamLeaderName> - executable from any player
+     * 
+     */
 
     /**
      * A function that takes two valid OfflinePlayers and creates a team with the
