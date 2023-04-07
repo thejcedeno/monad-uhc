@@ -1,5 +1,9 @@
 package us.jcedeno.anmelden.bukkit.teams.commands;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
+import java.util.UUID;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,10 +20,6 @@ import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.teams.TeamManager;
 
-import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
-
-import java.util.UUID;
-
 @CommandContainer
 @Log4j2
 public class TeamCommands {
@@ -30,7 +30,7 @@ public class TeamCommands {
     @ProxiedBy("team list")
     @CommandMethod("teams")
     public void teams(final @NonNull CommandSender sender) {
-        //If no teams, send a message saying that there are no teams
+        // If no teams, send a message saying that there are no teams
         if (teamManager.teams().isEmpty()) {
             sender.sendMessage(miniMessage().deserialize("<red>There are no teams."));
             return;
@@ -70,7 +70,7 @@ public class TeamCommands {
      * 
      */
     @CommandMethod("team disband")
-    @CommandDescription("Disbands the team of the player."	)
+    @CommandDescription("Disbands the team of the player.")
     public void disbandTeam(final @NonNull Player player) {
         if (!teamManager.hasTeam(player.getUniqueId())) {
             player.sendMessage(miniMessage().deserialize("<red>You don't have a team."));
@@ -83,21 +83,49 @@ public class TeamCommands {
 
     @CommandMethod("team invite <target>")
     @CommandDescription("Invites a player to your team.")
-    public void playerInviteCommand(Player sender, @Argument("target") OfflinePlayer target) {
+    public void playerInviteCommand(final Player sender, final @Argument("target") OfflinePlayer target) {
         if (!teamManager.hasTeam(sender.getUniqueId())) {
             sender.sendMessage(miniMessage().deserialize("<red>You don't have a team."));
             return;
         }
         if (teamManager.hasTeam(target.getUniqueId())) {
-            sender.sendMessage(miniMessage().deserialize(String.format("<red>%s already has a team.", target.getName())));
+            sender.sendMessage(
+                    miniMessage().deserialize(String.format("<red>%s already has a team.", target.getName())));
             return;
         }
-        // TODO: Actually implement the team logic/
 
-        sender.sendMessage(miniMessage().deserialize(String
-                .format("<green>You have invited <white><bold>%s</bold></white> to your team.", target.getName())));
+        teamManager.sendTeamInvite(sender, target.getPlayer(), teamManager.teamByPlayer(sender.getUniqueId()));
     }
-    
+
+    @CommandMethod("team accept <inviter>")
+    @CommandDescription("Accepts a team invite.")
+    public void teamAcceptCommand(final Player sender, final @Argument("inviter") Player inviter) {
+        if (teamManager.hasTeam(sender.getUniqueId())) {
+            sender.sendMessage(miniMessage().deserialize("<red>You already have a team."));
+            return;
+        }
+        if (!teamManager.hasTeam(inviter.getUniqueId())) {
+            sender.sendMessage(
+                    miniMessage().deserialize(String.format("<red>%s doesn't have a team.", inviter.getName())));
+            return;
+        }
+        teamManager.acceptTeamInvite(sender, inviter);
+    }
+
+    @CommandMethod("team deny <inviter>")
+    @CommandDescription("Denies a team invite.")
+    public void teamDenyCommand(final Player sender, final @Argument("inviter") Player inviter) {
+        if (teamManager.hasTeam(sender.getUniqueId())) {
+            sender.sendMessage(miniMessage().deserialize("<red>You already have a team."));
+            return;
+        }
+        if (!teamManager.hasTeam(inviter.getUniqueId())) {
+            sender.sendMessage(
+                    miniMessage().deserialize(String.format("<red>%s doesn't have a team.", inviter.getName())));
+            return;
+        }
+        teamManager.rejectTeamInvite(sender, inviter);
+    }
 
     // Boiler plate code for the command framework.
     public TeamCommands(final @NonNull AnnotationParser<CommandSender> parser) {
