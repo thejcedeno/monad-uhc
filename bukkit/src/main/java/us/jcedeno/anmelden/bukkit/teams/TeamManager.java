@@ -322,6 +322,11 @@ public class TeamManager {
 
     }
 
+    /**
+     * A function to kick a player out of a team
+     * 
+     * TODO: Implement this.
+     */
     public void kickPlayerFromTeam(Player sender, @Nullable Player player) {
         throw new RuntimeException("Not implemented yet.");
     }
