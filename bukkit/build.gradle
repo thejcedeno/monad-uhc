@@ -9,6 +9,7 @@ archivesBaseName = 'monad-uhc'
 repositories {
     mavenCentral()
     jitpack()
+    protocolLib()
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
 }
 
@@ -23,6 +24,7 @@ ext {
 dependencies {
     /** Import PaperMC */
     compileOnly paper(versions.paper)
+    implementation 'com.comphenix.protocol:ProtocolLib:5.0.0-20230326.191750-8'
     /**Import incendo/cloud*/
     implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
@@ -73,6 +75,7 @@ spigot {
     apiVersion '1.19'
     version "${branch()}-${date()} (${hash()})"
     name 'monad-uhc'
+    depends('ProtocolLib')
     load STARTUP
 }
 
