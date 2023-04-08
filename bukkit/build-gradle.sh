@@ -1,2 +1,2 @@
 #!/bin/bash
-cd ../ && ./gradlew :bukkit:clean :bukkit:build 
+cd ../ && ./gradlew :bukkit:build 

@@ -13,10 +13,12 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.processing.CommandContainer;
+import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.skins.SkinToolApi;
 
 @CommandContainer
+@Log4j2
 public class SkinToolCommand {
 
     @CommandMethod("skin <targetPlayer> <skinSource> <skinVariant>")
@@ -48,8 +50,13 @@ public class SkinToolCommand {
                             return;
                         }
 
+                        log.info("Skins: " + skins);
+
                         var skin = skins.stream().filter(s -> s.getName().equalsIgnoreCase(skinVariant))
                                 .findFirst();
+
+                        log.info("Skin: " + skin);
+
                         if (skin.isEmpty()) {
                             sender.sendMessage("Skin not found");
                             return;
