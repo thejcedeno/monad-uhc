@@ -20,7 +20,7 @@ public class SudoGameCommands {
     @ProxiedBy("start")
     @CommandMethod("sgame start [seconds]")
     @CommandDescription("Starts a new game instance, replacing the current one if existant.")
-    private void startGame(final Player sender,
+    public void startGame(final Player sender,
             final @Argument(value = "seconds", defaultValue = "3") Integer seconds) {
         // Send game started message:
         sender.sendMessage(MiniMessage.miniMessage().deserialize("<gradient:#ff0000:#00ff00>Game started!</gradient>"));

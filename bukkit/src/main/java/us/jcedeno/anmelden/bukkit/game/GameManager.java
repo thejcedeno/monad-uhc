@@ -6,6 +6,11 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +28,17 @@ import us.jcedeno.anmelden.bukkit.game.models.Game;
 public class GameManager {
 
     protected Game game;
+    protected NoDamageListener dNoDamageListener = new NoDamageListener();
+
+    public static class NoDamageListener implements Listener {
+
+        @EventHandler
+        public void onPlayerDmgCancel(EntityDamageEvent e) {
+            if (e instanceof Player p) {
+                e.setCancelled(true);
+            }
+        }
+    }
 
     public GameManager() {
         this.game = Game.of();
@@ -30,12 +46,15 @@ public class GameManager {
 
         var actions = new HashMap<Integer, Consumer<Game>>();
 
-        int i = 0;
+        actions.put(15, c -> {
+            HandlerList.unregisterAll(dNoDamageListener);
+            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Player Damage has been enabled!"));
+        });
+
         // What happens at second 0
         actions.put(0, g -> {
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Game has begun!"));
             Bukkit.getOnlinePlayers().stream().forEach(p -> {
-                p.setGameMode(GameMode.SURVIVAL);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 // Clear inventory
@@ -49,8 +68,11 @@ public class GameManager {
                 // Restore hunger
                 p.setSaturation(20);
                 // Play a sound
+                Bukkit.getScheduler().runTask(MonadUHC.instance(), () -> p.setGameMode(GameMode.SURVIVAL));
                 p.playSound(p.getLocation(), "minecraft:entity.player.levelup", 1, 1);
             });
+            // Temporarily register a No Damage Listener
+            Bukkit.getPluginManager().registerEvents(dNoDamageListener, MonadUHC.instance());
         });
 
         game.setGameLoopActions(actions);
