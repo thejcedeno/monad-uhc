@@ -25,18 +25,14 @@ import us.jcedeno.anmelden.bukkit.game.models.Game;
  * @author jcedeno
  */
 @Log4j2
-public class GameManager {
+public class GameManager implements Listener {
 
     protected Game game;
-    protected NoDamageListener dNoDamageListener = new NoDamageListener();
 
-    public static class NoDamageListener implements Listener {
-
-        @EventHandler
-        public void onPlayerDmgCancel(EntityDamageEvent e) {
-            if (e instanceof Player p) {
-                e.setCancelled(true);
-            }
+    @EventHandler
+    public void onPlayerDmgCancel(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player p) {
+            e.setCancelled(true);
         }
     }
 
@@ -47,12 +43,12 @@ public class GameManager {
         var actions = new HashMap<Integer, Consumer<Game>>();
 
         actions.put(15, c -> {
-            HandlerList.unregisterAll(dNoDamageListener);
+            HandlerList.unregisterAll(this);
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Player Damage has been enabled!"));
         });
-
         // What happens at second 0
         actions.put(0, g -> {
+            Bukkit.getPluginManager().registerEvents(this, MonadUHC.instance());
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Game has begun!"));
             Bukkit.getOnlinePlayers().stream().forEach(p -> {
                 p.setHealth(20);
@@ -72,7 +68,6 @@ public class GameManager {
                 p.playSound(p.getLocation(), "minecraft:entity.player.levelup", 1, 1);
             });
             // Temporarily register a No Damage Listener
-            Bukkit.getPluginManager().registerEvents(dNoDamageListener, MonadUHC.instance());
         });
 
         game.setGameLoopActions(actions);
