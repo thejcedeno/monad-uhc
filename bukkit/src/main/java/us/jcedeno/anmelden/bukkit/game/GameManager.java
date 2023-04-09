@@ -42,6 +42,24 @@ public class GameManager implements Listener {
 
         var actions = new HashMap<Integer, Consumer<Game>>();
 
+        // Final heal
+        actions.put(game.finalHealTime(), c -> {
+            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Final Heal!"));
+            Bukkit.getOnlinePlayers().stream().forEach(p -> {
+                p.setHealth(20);
+                // send a message
+                p.sendMessage(MiniMessage.miniMessage().deserialize("<green>You have been healed!"));
+            });
+        });
+        // Pvp Time
+        actions.put(game.pvpTime(), c -> {
+            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>PvP has been enabled!"));
+            //TODO: Implement PVP toggle event.
+            Bukkit.getOnlinePlayers().stream().forEach(p -> {
+                p.playSound(p.getLocation(), "minecraft:block.anvil.place", 1, 1);
+            });
+        });
+
         actions.put(15, c -> {
             HandlerList.unregisterAll(this);
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Player Damage has been enabled!"));
