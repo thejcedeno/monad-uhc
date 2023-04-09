@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 
 import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
 
@@ -35,8 +36,16 @@ public class LocationManagerImpl implements LocationManager{
 
     @Override
     public Location getScatterLocation(World world, int x, int z, int radius) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getScatterLocation'");
+
+        // Find random block in radius centered at x,z
+        int rx = x + (int) (Math.random() * radius * 2) - radius;
+        int rz = z + (int) (Math.random() * radius * 2) - radius;
+
+        // Find highest block at random location
+        var b = world.getHighestBlockAt(rx, rz);
+
+        return b.getRelative(BlockFace.UP).getLocation().add(0.5, 60, 0.5);
+    
     }
 
     @Override

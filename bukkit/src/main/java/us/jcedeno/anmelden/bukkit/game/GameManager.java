@@ -12,6 +12,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -54,7 +56,7 @@ public class GameManager implements Listener {
         // Pvp Time
         actions.put(game.pvpTime(), c -> {
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>PvP has been enabled!"));
-            //TODO: Implement PVP toggle event.
+            // TODO: Implement PVP toggle event.
             Bukkit.getOnlinePlayers().stream().forEach(p -> {
                 p.playSound(p.getLocation(), "minecraft:block.anvil.place", 1, 1);
             });
@@ -69,6 +71,7 @@ public class GameManager implements Listener {
             Bukkit.getPluginManager().registerEvents(this, MonadUHC.instance());
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Game has begun!"));
             Bukkit.getOnlinePlayers().stream().forEach(p -> {
+                MonadUHC.instance().getPlayerManager().registerGamePlayer(p);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 // Clear inventory
@@ -82,7 +85,11 @@ public class GameManager implements Listener {
                 // Restore hunger
                 p.setSaturation(20);
                 // Play a sound
-                Bukkit.getScheduler().runTask(MonadUHC.instance(), () -> p.setGameMode(GameMode.SURVIVAL));
+                Bukkit.getScheduler().runTask(MonadUHC.instance(), () -> {
+                    p.teleport(MonadUHC.instance().getLocationManager().getScatterLocation(p.getWorld(), 0, 0, 500));
+                    p.setGameMode(GameMode.SURVIVAL);
+                    p.addPotionEffect(PotionEffectType.SLOW_FALLING.createEffect(20, 1));
+                });
                 p.playSound(p.getLocation(), "minecraft:entity.player.levelup", 1, 1);
             });
             // Temporarily register a No Damage Listener
