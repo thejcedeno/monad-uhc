@@ -13,6 +13,7 @@ import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import us.jcedeno.anmelden.bukkit._utils.fastinv.FastInvManager;
+import us.jcedeno.anmelden.bukkit.game.GameManager;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 import us.jcedeno.anmelden.bukkit.teams.TeamManager;
 
@@ -29,6 +30,7 @@ public class MonadUHC extends JavaPlugin {
     /** Managers */
     private @Getter ScenarioManager scenarioManager;
     private @Getter TeamManager teamManager;
+    private @Getter GameManager gameManager;
 
     /**
      * @return The instance of the MonadUHC plugin.
@@ -86,5 +88,6 @@ public class MonadUHC extends JavaPlugin {
             e.printStackTrace();
         }
     }
+
 
 }
