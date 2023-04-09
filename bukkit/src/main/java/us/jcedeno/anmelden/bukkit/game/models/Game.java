@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.bukkit.Bukkit;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 @RequiredArgsConstructor(staticName = "of")
 @AllArgsConstructor
@@ -36,7 +39,7 @@ public class Game implements Runnable {
         if (this.actuallyEnded) {
             return;
         }
-        if (this.holding){
+        if (this.holding) {
             return;
         }
         if (!this.hasFirstTickHappened) {
@@ -51,6 +54,7 @@ public class Game implements Runnable {
         this.tick();
         this.gameLoopActions();
     }
+
     /**
      * Any domain specific actions that need to take place at second 0 of the game.
      * e.g.:
@@ -71,6 +75,19 @@ public class Game implements Runnable {
 
     }
 
+    // A function that takes int seconds and returns a properly formatted hh:mm:ss
+    // string with hh hidden if 0
+    public static String formatTime(int seconds) {
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+        if (hours == 0) {
+            return String.format("%02d:%02d", minutes, secs);
+        } else {
+            return String.format("%02d:%02d:%02d", hours, minutes, secs);
+        }
+    }
+
     /*
      * All the actions that need to happen at seconds n+1. That is, each actual
      * second of the game. e.g.:
@@ -78,7 +95,6 @@ public class Game implements Runnable {
      * - At second 600 enable pvp
      */
     protected void gameLoopActions() {
-        log.info("Things that need to happened at second seconds t+1. Current second: " + this.currentSecond);
         if (this.isGameOver()) {
             log.info("Tried to run game loop actions, but the game is over.");
             return;
@@ -87,9 +103,14 @@ public class Game implements Runnable {
 
         if (currentTickTasks != null) {
             currentTickTasks.accept(this);
-            return;
+            log.info("Ran actions for this tick.");
+        } else {
+            log.info("No actions for this tick.");
         }
-        System.out.println("No actions for current second: " + this.currentSecond);
+
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(MiniMessage.miniMessage()
+                .deserialize(String.format("<green>Time Elapsed: <white>%s", formatTime(currentSecond())))));
+
     }
 
     /**

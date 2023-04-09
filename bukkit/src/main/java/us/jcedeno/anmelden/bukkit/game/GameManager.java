@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,14 +31,11 @@ public class GameManager {
         var actions = new HashMap<Integer, Consumer<Game>>();
 
         int i = 0;
-        while (++i < 60)
-            actions.put(i, c -> Bukkit.getOnlinePlayers().forEach(p -> p.sendActionBar(
-                    MiniMessage.miniMessage().deserialize("<white>Ticking game second: <green>" + c.currentSecond()))));
-
         // What happens at second 0
         actions.put(0, g -> {
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Game has begun!"));
             Bukkit.getOnlinePlayers().stream().forEach(p -> {
+                p.setGameMode(GameMode.SURVIVAL);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 // Clear inventory
