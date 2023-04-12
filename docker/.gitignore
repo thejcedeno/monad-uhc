@@ -1,0 +1,12 @@
+proxy-data/*
+!proxy-data/velocity.toml
+
+uhc-data/*
+!uhc-data/config/
+!uhc-data/server.properties
+!uhc-data/bukkit.yml
+
+lobby-data/*
+!lobby-data/config/
+!lobby-data/server.properties
+!lobby-data/bukkit.yml

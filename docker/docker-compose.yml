@@ -1,0 +1,46 @@
+version: '3'
+services:
+  lobby:
+    image: itzg/minecraft-server
+    environment:
+      - TYPE=PAPER
+      - VERSION=1.19.4
+      - EULA=true
+    volumes:
+      - ./lobby-data:/data
+    ports:
+      - "25567:25565"
+    networks:
+      - mc_network
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+  uhc:
+    image: itzg/minecraft-server
+    environment:
+      - TYPE=PAPER
+      - VERSION=1.19.4
+      - EULA=true
+    volumes:
+      - ./uhc-data:/data
+    ports:
+      - "25566:25565"
+    networks:
+      - mc_network
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+  velocity:
+    image: itzg/bungeecord
+    environment:
+      - TYPE=VELOCITY
+    volumes:
+      - ./proxy-data:/server
+    ports:
+      - "25565:25577"
+    networks:
+      - mc_network
+
+networks:
+  mc_network:
