@@ -2,4 +2,5 @@
 # Build the project
 ./build-gradle.sh
 # Now move the newly generated jar
-mv build/libs/monad-uhc-*-all.jar debug/plugins/monad-uhc.jar && cd debug && ./start.sh 
+# mv build/libs/monad-uhc-*-all.jar debug/plugins/monad-uhc.jar && cd debug && ./start.sh 
+sudo mv build/libs/monad-uhc-*-all.jar ../docker/uhc-data/plugins/monad-uhc.jar
