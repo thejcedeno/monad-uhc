@@ -17,14 +17,15 @@ ext {
     versions = [
         paper: '1.19.4',
         cloudPaper: '1.8.3',
-        adventureTextMinimessage: '4.13.0'
+        adventureTextMinimessage: '4.13.0',
+        protocolLibVersion: '5.0.0-SNAPSHOT'
     ]
 }
 
 dependencies {
     /** Import PaperMC */
-    compileOnly paper(versions.paper)
-    implementation 'com.comphenix.protocol:ProtocolLib:5.0.0-20230326.191750-8'
+    implementation paper(versions.paper)
+    implementation group: "com.comphenix.protocol", name: "ProtocolLib", version: "${versions.protocolLibVersion}";
     /**Import incendo/cloud*/
     implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"
