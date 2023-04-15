@@ -25,7 +25,8 @@ ext {
 dependencies {
     /** Import PaperMC */
     implementation paper(versions.paper)
-    implementation group: "com.comphenix.protocol", name: "ProtocolLib", version: "${versions.protocolLibVersion}";
+    // Protocol lib.
+    implementation "com.comphenix.protocol:ProtocolLib:${versions.protocolLibVersion}"
     /**Import incendo/cloud*/
     implementation "cloud.commandframework:cloud-core:${versions.cloudPaper}"
     implementation "cloud.commandframework:cloud-annotations:${versions.cloudPaper}"

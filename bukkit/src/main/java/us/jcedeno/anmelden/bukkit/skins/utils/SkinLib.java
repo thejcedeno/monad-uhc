@@ -19,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldType;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -28,7 +27,6 @@ import org.bukkit.plugin.Plugin;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.reflect.FuzzyReflection;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.utility.MinecraftVersion;
@@ -41,18 +39,34 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.hash.Hashing;
 
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
+import us.jcedeno.anmelden.bukkit.skins.model.PlayerSkin;
 
+/**
+ * 
+ * A utility class that handles applying a skin to a player with all the
+ * newances of newer game versions. Intended to be used in tandem with a system
+ * that manages the state of the skins generated and currently active, as well
+ * as keeping a way to restore back to original skin.
+ * 
+ * @author jcedeno
+ * @author games647 - took some code from him -
+ *         https://github.com/games647/ChangeSkin/blob/main/bukkit/src/main/java/com/github/games647/changeskin/bukkit/task/SkinApplier.java
+ */
 @Log4j2
-public class SkinApplier {
-
+public class SkinLib {
+    /*
+     * All of this is black magic we don't need to understand. It's a bunch of
+     * reflection to figure out what methods to properly call from bukkit
+     * dependening on the current game version.
+     */
     private static final boolean NEW_HIDE_METHOD_AVAILABLE;
-
-    // static final methods are faster, because JVM can inline them and make them
-    // accessible
     private static final Method DEBUG_WORLD_METHOD;
 
     private static final Method PLAYER_HANDLE_METHOD;
@@ -122,96 +136,103 @@ public class SkinApplier {
         DISABLED_PACKETS = localDisable;
     }
 
-    private static Field getPreviousGamemodeField(Class<?> interactionManager) throws NoSuchFieldException {
-        List<Field> gamemodes = FuzzyReflection.fromClass(interactionManager, true)
-                .getFieldListByType(EnumWrappers.getGameModeClass());
-        if (gamemodes.size() < 2) {
-            throw new NoSuchFieldException("Cannot find previous gamemode field");
+    // jcedeno's version of the skinlib starts here.
+
+    /**
+     * A helper function that returns a WrappedGameProfile for a player with the
+     * provided Skin properties.
+     * 
+     * @param player the player to get the WrappedGameProfile for.
+     * @param skin   the skin properties to apply to the WrappedGameProfile.
+     * @return the WrappedGameProfile with the provided skin properties.
+     */
+    public static WrappedGameProfile getUpdatedGameProfile(final Player player, final PlayerSkin skin) {
+        var gameProfile = WrappedGameProfile.fromPlayer(player);
+
+        gameProfile.getProperties().put("textures",
+                WrappedSignedProperty.fromValues("textures", skin.getValue(), skin.getSignature()));
+
+        return gameProfile;
+    }
+
+    /**
+     * Helper function to parse a ProtocolLib WrappedGameProfile to a Paper based
+     * PlayerProfile.
+     * 
+     * @param player             the player to get the PlayerProfile for.
+     * @param wrappedGameProfile the ProtocolLib WrappedGameProfile.
+     * @return the Paper based PlayerProfile.
+     */
+    public static PlayerProfile fromWrappedToPlayerProfile(final Player player,
+            final WrappedGameProfile wrappedGameProfile) {
+        PlayerProfile playerProfile = player.getPlayerProfile();
+
+        // Clear properties so that we can override them.
+        playerProfile.clearProperties();
+
+        for (WrappedSignedProperty property : wrappedGameProfile.getProperties().values()) {
+            playerProfile
+                    .setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature()));
         }
-
-        // skip the first field that is the current field
-        return gamemodes.get(1);
+        return playerProfile;
     }
 
-    private final CommandSender invoker;
-    private final Player receiver;
-    private final boolean keepSkin;
+    /**
+     * Method that sends all the packets necessary to update the skin of a player in
+     * > 1.19.3.
+     * 
+     * @param updatePlayer the player to update
+     * @param skin         the new skin
+     */
+    public static void updatePlayerSkin(final Player updatePlayer, final PlayerSkin skin) {
+        // Force player out of vehicle to perform update
+        // TODO: Comeback to this and make it so that the player can remounted.
+        Optional.ofNullable(updatePlayer.getVehicle()).ifPresent(Entity::eject);
 
-    public SkinApplier(CommandSender invoker, Player receiver, boolean keepSkin) {
+        final var wrappedGameProfile = getUpdatedGameProfile(updatePlayer, skin);
+        final var gameProfile = fromWrappedToPlayerProfile(updatePlayer, wrappedGameProfile);
 
-        this.invoker = invoker;
-        this.receiver = receiver;
-        // this.targetSkin = targetSkin;
-        this.keepSkin = keepSkin;
-    }
-
-    public void run() {
-        if (!isConnected()) {
-            return;
-        }
-
-        // applySkin();
-    }
-
-    protected boolean isConnected() {
-        return receiver != null && receiver.isOnline();
-    }
-
-    protected void applyInstantUpdate() {
-        // TODO Come back to this and figure out what the mehtod is.
-        // plugin.getApi().applySkin(receiver, targetSkin);
-
-        if (!DISABLED_PACKETS) {
-            sendUpdateSelf(WrappedGameProfile.fromPlayer(receiver));
-        }
-
-        sendUpdateOthers();
-
-        if (receiver.equals(invoker)) {
-            log.info("Skin changed for " + receiver.getName());
-        } else {
-            log.info("Skin updated for " + receiver.getName() + " by " + invoker.getName());
-        }
-    }
-
-    protected void runAsync(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(MonadUHC.instance(), runnable);
-    }
-
-    private void sendUpdateOthers() throws FieldAccessException {
-        // triggers an update for others player to see the new skin
-        Bukkit.getOnlinePlayers().stream()
-                .filter(onlinePlayer -> !onlinePlayer.equals(receiver))
-                .filter(onlinePlayer -> onlinePlayer.canSee(receiver))
-                .forEach(this::hideAndShow);
-    }
-
-    private void sendUpdateSelf(WrappedGameProfile gameProfile) throws FieldAccessException {
-        Optional.ofNullable(receiver.getVehicle()).ifPresent(Entity::eject);
-
-        sendPacketsSelf(gameProfile);
+        sendPacketsSelf(updatePlayer, wrappedGameProfile);
 
         // trigger update exp
-        receiver.setExp(receiver.getExp());
+        updatePlayer.setExp(updatePlayer.getExp());
 
         // triggers updateAbilities
-        receiver.setWalkSpeed(receiver.getWalkSpeed());
+        updatePlayer.setWalkSpeed(updatePlayer.getWalkSpeed());
 
         // send the current inventory - otherwise player would have an empty inventory
-        receiver.updateInventory();
+        updatePlayer.updateInventory();
 
-        PlayerInventory inventory = receiver.getInventory();
+        PlayerInventory inventory = updatePlayer.getInventory();
         inventory.setHeldItemSlot(inventory.getHeldItemSlot());
 
         // trigger update attributes like health modifier for generic.maxHealth
         try {
-            receiver.getClass().getDeclaredMethod("updateScaledHealth").invoke(receiver);
+            updatePlayer.getClass().getDeclaredMethod("updateScaledHealth").invoke(updatePlayer);
         } catch (ReflectiveOperationException reflectiveEx) {
             log.error("Failed to invoke updateScaledHealth for attributes", reflectiveEx);
         }
+        // Hide and show player to others??
+        updatePlayer.setPlayerProfile(gameProfile);
+        // TODO: Not sure how this would communicate the new skin to other players.
+        Bukkit.getOnlinePlayers().stream()
+                .filter(onlinePlayer -> !onlinePlayer.equals(updatePlayer))
+                .filter(onlinePlayer -> onlinePlayer.canSee(updatePlayer))
+                .forEach(p -> hideAndShow(p, updatePlayer));
     }
 
-    private void sendPacketsSelf(WrappedGameProfile gameProfile) {
+    // jcedeno's version of the skinlib ends here. everything after this is helper
+    // functions to enable it.
+
+    /**
+     * Helper function that creates and sends all the necessary packets to the
+     * player whose skin is being updated.
+     * 
+     * @param receiver    the player whose skin is being updated.
+     * @param gameProfile the game profile of the player whose skin is being
+     *                    updated.
+     */
+    private static void sendPacketsSelf(Player receiver, WrappedGameProfile gameProfile) {
         PacketContainer removeInfo;
         PacketContainer addInfo;
         PacketContainer respawn;
@@ -224,13 +245,13 @@ public class SkinApplier {
             PlayerInfoData playerInfoData = new PlayerInfoData(gameProfile, 0, gamemode, displayName, null);
 
             // remove the old skin - client updates it only on a complete remove and add
-            removeInfo = createRemovePacket(playerInfoData);
+            removeInfo = createRemovePacket(receiver, playerInfoData);
 
             // add info containing the skin data
-            addInfo = createAddPacket(playerInfoData);
+            addInfo = createAddPacket(receiver, playerInfoData);
 
             // Respawn packet - notify the client that it should update the own skin
-            respawn = createRespawnPacket(gamemode);
+            respawn = createRespawnPacket(receiver, gamemode);
 
             // prevent the moved too quickly message
             teleport = createTeleportPacket(receiver.getLocation().clone());
@@ -239,10 +260,17 @@ public class SkinApplier {
             return;
         }
 
-        sendPackets(removeInfo, addInfo, respawn, teleport);
+        sendPackets(receiver, removeInfo, addInfo, respawn, teleport);
     }
 
-    private PacketContainer createAddPacket(PlayerInfoData playerInfoData) {
+    /**
+     * Helper function that creates the ADD to PlayerInfo packet (tab).
+     * 
+     * @param receiver       the player whose skin is being updated.
+     * @param playerInfoData the player info data to add to the packet.
+     * @return the ADD to PlayerInfo packet.
+     */
+    private static PacketContainer createAddPacket(Player receiver, PlayerInfoData playerInfoData) {
         PacketContainer addInfo = new PacketContainer(PLAYER_INFO);
         if (new MinecraftVersion(1, 19, 0).atOrAbove()) {
             addInfo.getPlayerInfoDataLists().write(1, Collections.singletonList(playerInfoData));
@@ -259,7 +287,14 @@ public class SkinApplier {
         return addInfo;
     }
 
-    private PacketContainer createRemovePacket(PlayerInfoData playerInfoData) {
+    /**
+     * Helper function that creates the REMOVE from PlayerInfo packet (tab).
+     * 
+     * @param receiver       the player whose skin is being updated.
+     * @param playerInfoData the player info data to remove from the packet.
+     * @return the REMOVE from PlayerInfo packet.
+     */
+    private static PacketContainer createRemovePacket(Player receiver, PlayerInfoData playerInfoData) {
         PacketContainer removeInfo;
         if (new MinecraftVersion(1, 19, 3).atOrAbove()) {
             removeInfo = new PacketContainer(PLAYER_INFO_REMOVE);
@@ -275,26 +310,16 @@ public class SkinApplier {
         return removeInfo;
     }
 
-    @SuppressWarnings("deprecation")
-    private void hideAndShow(Player other) {
-        // removes the entity and display the new skin
-        if (NEW_HIDE_METHOD_AVAILABLE) {
-            other.hidePlayer(MonadUHC.instance(), receiver);
-            other.showPlayer(MonadUHC.instance(), receiver);
-        } else {
-            other.hidePlayer(receiver);
-            other.showPlayer(receiver);
-        }
-    }
-
-    private void sendPackets(PacketContainer... packets) {
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        for (PacketContainer packet : packets) {
-            protocolManager.sendServerPacket(receiver, packet);
-        }
-    }
-
-    private PacketContainer createRespawnPacket(NativeGameMode gamemode) throws ReflectiveOperationException {
+    /**
+     * Helper function that creates the respawn packet.
+     * 
+     * @param receiver the player whose skin is being updated.
+     * @param gamemode the gamemode of the player whose skin is being updated.
+     * @return the respawn packet.
+     * @throws ReflectiveOperationException if the packet could not be created.
+     */
+    private static PacketContainer createRespawnPacket(Player receiver, NativeGameMode gamemode)
+            throws ReflectiveOperationException {
         PacketContainer respawn = new PacketContainer(RESPAWN);
 
         World world = receiver.getWorld();
@@ -374,11 +399,13 @@ public class SkinApplier {
         return respawn;
     }
 
-    private static boolean isAtOrAbove(String s) {
-        return MinecraftVersion.getCurrentVersion().compareTo(new MinecraftVersion(s)) >= 0;
-    }
-
-    private PacketContainer createTeleportPacket(Location location) {
+    /**
+     * Creates a teleport packet that will be sent to the player.
+     * 
+     * @param location the location to teleport to.
+     * @return the teleport packet.
+     */
+    private static PacketContainer createTeleportPacket(Location location) {
         PacketContainer teleport = new PacketContainer(POSITION);
         teleport.getModifier().writeDefaults();
 
@@ -395,7 +422,26 @@ public class SkinApplier {
         return teleport;
     }
 
-    private NativeGameMode getPreviousGamemode(Player receiver) {
+    /**
+     * Sends the given packets to the given player.
+     * 
+     * @param receiver the player to send the packets to.
+     * @param packets  the packets to send.
+     */
+    private static void sendPackets(Player receiver, PacketContainer... packets) {
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        for (PacketContainer packet : packets) {
+            protocolManager.sendServerPacket(receiver, packet);
+        }
+    }
+
+    /**
+     * Gets the previous, packet safe gamemode of the given player.
+     * 
+     * @param receiver the player to get the gamemode of.
+     * @return the previous gamemode.
+     */
+    private static NativeGameMode getPreviousGamemode(Player receiver) {
         try {
             Object nmsPlayer = PLAYER_HANDLE_METHOD.invoke(receiver);
             Object interactionManager = INTERACTION_MANAGER.get(nmsPlayer);
@@ -412,7 +458,13 @@ public class SkinApplier {
         return NativeGameMode.fromBukkit(receiver.getGameMode());
     }
 
-    private Object getDimensionType(World world) {
+    /**
+     * Gets the dimension type of the given world.
+     * 
+     * @param world the world to get the dimension type of.
+     * @return the dimension type.
+     */
+    private static Object getDimensionType(World world) {
         try {
             Class<?> holderClass = MinecraftReflection.getMinecraftClass("core.Holder");
             Class<?> nmsWorldClass = MinecraftReflection.getNmsWorldClass();
@@ -435,5 +487,43 @@ public class SkinApplier {
         }
 
         return null;
+    }
+
+    /**
+     * Gets the previous gamemode field of the given interaction manager.
+     * 
+     * @param interactionManager the interaction manager to get the field from.
+     * @return the previous gamemode field.
+     * @throws NoSuchFieldException if the field cannot be found.
+     */
+    private static Field getPreviousGamemodeField(Class<?> interactionManager) throws NoSuchFieldException {
+        List<Field> gamemodes = FuzzyReflection.fromClass(interactionManager, true)
+                .getFieldListByType(EnumWrappers.getGameModeClass());
+        if (gamemodes.size() < 2) {
+            throw new NoSuchFieldException("Cannot find previous gamemode field");
+        }
+
+        // skip the first field that is the current field
+        return gamemodes.get(1);
+    }
+
+    private static boolean isAtOrAbove(String s) {
+        return MinecraftVersion.getCurrentVersion().compareTo(new MinecraftVersion(s)) >= 0;
+    }
+
+    protected static void runAsync(Runnable runnable) {
+        Bukkit.getScheduler().runTaskAsynchronously(MonadUHC.instance(), runnable);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void hideAndShow(Player other, Player receiver) {
+        // removes the entity and display the new skin
+        if (NEW_HIDE_METHOD_AVAILABLE) {
+            other.hidePlayer(MonadUHC.instance(), receiver);
+            other.showPlayer(MonadUHC.instance(), receiver);
+        } else {
+            other.hidePlayer(receiver);
+            other.showPlayer(receiver);
+        }
     }
 }
