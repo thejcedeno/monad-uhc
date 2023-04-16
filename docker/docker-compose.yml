@@ -19,6 +19,7 @@ services:
     image: itzg/minecraft-server
     environment:
       - TYPE=PAPER
+      - MEMORY=4G
       - VERSION=1.19.4
       - EULA=true
     volumes:
