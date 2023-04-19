@@ -9,14 +9,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
-import java.util.Set;
 
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
 import lombok.SneakyThrows;
 
-public class GlobalUtils {
+public class GUtils {
 
     public static class SerializedObject<T> {
         private final T object;
@@ -80,12 +79,8 @@ public class GlobalUtils {
 
     }
 
-    public static Set<Class<?>> findAnnotatedClasses(String packageName, Class<? extends Annotation> annotationClass) {
-    Reflections reflections = new Reflections(packageName);
-    Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(annotationClass);
-    return annotatedClasses;
-}
+    public static Set<Class<?>> annotatedClasses(String packageName, Class<? extends Annotation> annotationClass) {
+        return new Reflections(packageName).getTypesAnnotatedWith(annotationClass);
+    }
 
-
-    
 }

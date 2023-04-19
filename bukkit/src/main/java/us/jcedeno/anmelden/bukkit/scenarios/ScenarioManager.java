@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 
 import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
-import us.jcedeno.anmelden.bukkit._utils.GlobalUtils;
+import us.jcedeno.anmelden.bukkit._utils.GUtils;
 import us.jcedeno.anmelden.bukkit.scenarios.annotations.Scenario;
 import us.jcedeno.anmelden.bukkit.scenarios.models.BaseScenario;
 
@@ -46,7 +46,7 @@ public class ScenarioManager {
      * TODO: Refactor this clusterf of a method
      */
     public void autoRegisterScenarios() {
-        GlobalUtils.findAnnotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
+        GUtils.annotatedClasses(this.getClass().getPackageName() + ".impl", Scenario.class).stream()
                 .forEach(sc -> {
                     // Check if class is of base scenario type.
                     if (!BaseScenario.class.isAssignableFrom(sc)) {
@@ -68,7 +68,8 @@ public class ScenarioManager {
                                 continue out;
 
                             // If the type of the current constructor isn't String, then exit early.
-                            if(params[0].getType() != String.class || params[1].getType() != String.class || params[2].getType() != Material.class)
+                            if (params[0].getType() != String.class || params[1].getType() != String.class
+                                    || params[2].getType() != Material.class)
                                 continue out;
 
                             // Invoke the constructor and register the scenario with the scenario manager.
@@ -120,7 +121,8 @@ public class ScenarioManager {
      * @return A map of all the scenarios.
      */
     public Map<String, BaseScenario> getScenariosMap() {
-        return scenarios.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().getClass().getSimpleName(), e -> e.getKey()));
+        return scenarios.entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey().getClass().getSimpleName(), e -> e.getKey()));
     }
 
     /**
@@ -129,7 +131,8 @@ public class ScenarioManager {
      * @param scenarioName The name of the scenario to get.
      */
     public BaseScenario getScenarioFromStr(String scenarioName) {
-        return scenarios.keySet().stream().filter(s -> s.getClass().getSimpleName().equalsIgnoreCase(scenarioName)).findFirst()
+        return scenarios.keySet().stream().filter(s -> s.getClass().getSimpleName().equalsIgnoreCase(scenarioName))
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Scenario not found"));
     }
 

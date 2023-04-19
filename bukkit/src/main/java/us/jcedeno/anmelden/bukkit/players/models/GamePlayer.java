@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import us.jcedeno.anmelden.bukkit._utils.GlobalUtils.SerializedObject;
+import us.jcedeno.anmelden.bukkit._utils.GUtils.SerializedObject;
 
 /**
  * A data class that represents a serializable UHC Player object.
