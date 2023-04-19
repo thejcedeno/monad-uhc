@@ -1,0 +1,10 @@
+# Ignore all files inside any subfolder that has "-data" in the directory name
+**/*-data/**
+
+# Include server.properties file and lobby folder
+!server.properties
+!lobby/
+!eula.txt
+!config/
+!velocity.toml
+!forwarding.secret
