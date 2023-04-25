@@ -37,15 +37,8 @@ public class ConfigManager {
                     log.info(String.format("Attempting to register rule %s.", annotation.name()));
 
                     try {
-                        Rule rule = (Rule) clz.getDeclaredConstructor(String.class, String.class)
+                        var rule = (Rule) clz.getDeclaredConstructor(String.class, String.class)
                                 .newInstance(annotation.name(), annotation.description());
-                        // Register the rule, disabled by default
-                        // TODO: Make this configurable
-                        if (rule instanceof NetherRule) {
-                            this.rules.put(rule, true);
-                            return;
-                        }
-                        // Default otherwise
                         this.rules.put(rule, false);
                     } catch (Exception e) {
                         log.error(String.format("Failed to register rule %s.", annotation.name()));
