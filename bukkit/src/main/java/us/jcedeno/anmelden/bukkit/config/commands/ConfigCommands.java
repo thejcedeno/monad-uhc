@@ -53,8 +53,8 @@ public class ConfigCommands {
         log.info("Listing all active rules.");
         // Get all rules
         final List<Rule> rules = MonadUHC.instance().getConfigManager().rulesMap().entrySet()
-                        .stream().filter(Entry::getValue).map(Entry::getKey)
-                        .collect(Collectors.toList());
+                .stream().filter(Entry::getValue).map(Entry::getKey)
+                .collect(Collectors.toList());
         // Send pretty message to user
         sender.sendMessage(MiniMessage.miniMessage().deserialize(
                 String.format("<Green>Currently active rules: <white><bold>%s</bold></white>",
@@ -119,8 +119,8 @@ public class ConfigCommands {
     public @NonNull List<String> getRegisteredRules(
             final @NonNull CommandContext<CommandSender> ctx,
             final @NonNull String input) {
-        return MonadUHC.instance().getConfigManager().rulesMap().entrySet().stream()
-                .map((e) -> e.getValue().getClass().getSimpleName()).collect(Collectors.toList());
+        return MonadUHC.instance().getConfigManager().rules().stream().map(r -> r.getClass().getSimpleName())
+                .collect(Collectors.toList());
     }
 
     /**
