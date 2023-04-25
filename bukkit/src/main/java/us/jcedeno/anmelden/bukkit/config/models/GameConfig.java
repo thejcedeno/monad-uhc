@@ -3,7 +3,11 @@ package us.jcedeno.anmelden.bukkit.config.models;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import us.jcedeno.anmelden.bukkit.scenarios.models.IScenario;
 
 /**
@@ -17,32 +21,24 @@ import us.jcedeno.anmelden.bukkit.scenarios.models.IScenario;
  * 
  * @author thejcedeno
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor(staticName = "create")
+@AllArgsConstructor
 public class GameConfig {
-    private UUID hostId;
-    private UUID internalTrackingId;
+    private UUID _hostId;
+    private UUID _internalTrackingId;
     private String matchName;
 
-    // TODO: Use dedidcated object for this later
-    private List<String> whitelist; // List of UUIDs or offlineplayer names.
+    // TODO: Add this functionality to the team manager instead.
+    private String teamConfig = "cTo2"; // cTo, rTo3, cTo4, ffa,
+    // Global Listener that limits players without bypass permission to join.   
+    private int maxPlayers = 70;
 
-    // TODO: replace with better object
-    private String teamConfig = "cTo2"; // cTo, rTo3, cTo4, ffa, 
+    // Game Timed Event cfg values, in secs.
+    private Long finalHeal = 2L * 60_000;
+    private Long pvp = 15L * 60_000;
+    private Long meetup = 60L * 60_000;
 
-    // Game Settings
-    private List<IScenario> scenarios;
-    private boolean nether;
-    private boolean end;
-    private boolean pvp;
-
-    private int maxPlayers;
-
-    // Game Timings stuff.
-    private Long pvptime = 15L * 60 * 1000;
-    private Long meetupTime = 60L * 60 * 1000;
-
-    // Timings stuff
-    private long expectedEndTime;
-    private long expectedStartTime;
 
 }

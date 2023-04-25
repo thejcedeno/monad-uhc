@@ -13,11 +13,15 @@ import lombok.extern.log4j.Log4j2;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit._utils.GUtils;
 import us.jcedeno.anmelden.bukkit.config.annotations.Setting;
+import us.jcedeno.anmelden.bukkit.config.models.GameConfig;
 import us.jcedeno.anmelden.bukkit.config.models.Rule;
 
 @Log4j2
 public class ConfigManager {
     protected volatile Map<Rule, Boolean> rules = new ConcurrentHashMap<>();
+    protected volatile GameConfig config;
+
+
 
     /**
      * Handle the auto initialization of the config manager.
@@ -30,6 +34,9 @@ public class ConfigManager {
      * Initialize the config manager.
      */
     public void init() {
+        //TODO: Implement restorability at this point.
+        this.config = GameConfig.create();
+        // Register rules
         GUtils.annotatedClasses(this.getClass().getPackageName() + ".rules", Setting.class)
                 .stream().filter(Rule.class::isAssignableFrom).forEach(clz -> {
                     var annotation = clz.getAnnotation(Setting.class);
@@ -183,4 +190,10 @@ public class ConfigManager {
     public List<Rule> rules() {
         return rules.keySet().stream().collect(Collectors.toList());
     }
+
+
+    public GameConfig config() {
+        return this.config;
+    }
+
 }
