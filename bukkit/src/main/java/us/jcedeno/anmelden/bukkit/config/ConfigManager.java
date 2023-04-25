@@ -1,7 +1,9 @@
 package us.jcedeno.anmelden.bukkit.config;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -147,4 +149,46 @@ public class ConfigManager {
         return rules.put(rule, false);
     }
 
+    /**
+     * A utility function to toggle a rule by name.
+     * 
+     * @param ruleName The name of the rule to toggle.
+     * @throws RuntimeException If the rule is not found.
+     * 
+     * @return True if the rule was toggled, false otherwise.
+     */
+    public boolean toggleRule(String ruleName) {
+        Rule rule = getRuleFromStr(ruleName);
+        return toggleRule(rule);
+    }
+
+    /**
+     * A utility function to toggle a rule.
+     * 
+     * @param rule The rule to toggle.
+     * @throws RuntimeException If the rule is not found.
+     * 
+     * @return True if the rule was toggled, false otherwise.
+     */
+    public boolean toggleRule(Rule rule) {
+        // Throw an exception if the rule is not enabled.
+        var ruleStatus = rules.get(rule);
+
+        return ruleStatus ? disableRule(rule) : enableRule(rule);
+    }
+
+    /**
+     * @return The rules hashMap, where the key is the Rule object, and the value is
+     *         wether it is enabled or not.
+     */
+    public Map<Rule, Boolean> rulesMap() {
+        return rules;
+    }
+
+    /**
+     * @return An immutable list of all the registered rules.
+     */
+    public List<Rule> rules() {
+        return rules.keySet().stream().collect(Collectors.toList());
+    }
 }
