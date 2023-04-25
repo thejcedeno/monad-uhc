@@ -14,7 +14,6 @@ import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit._utils.GUtils;
 import us.jcedeno.anmelden.bukkit.config.annotations.Setting;
 import us.jcedeno.anmelden.bukkit.config.models.Rule;
-import us.jcedeno.anmelden.bukkit.config.rules.NetherRule;
 
 @Log4j2
 public class ConfigManager {
