@@ -10,7 +10,7 @@ import us.jcedeno.anmelden.bukkit.config.models.Rule;
  * 
  * @author thejcedeno
  */
-@Setting(name = "global-rule", description = "Controls nothing.")
+//@Setting(name = "global-rule", description = "Controls nothing.")
 public class GSetting implements Rule {
     protected String name;
     protected String description;

@@ -3,6 +3,7 @@ package us.jcedeno.anmelden.bukkit.locations;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -10,16 +11,16 @@ import org.bukkit.block.BlockFace;
 import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
 
 /**
- * Handles the world generation, terrain generation, and handles the player scattering logic.
+ * Handles the world generation, terrain generation, and handles the player
+ * scattering logic.
  * 
  * @author thejcedeno
  */
-public class LocationManagerImpl implements LocationManager{
+public class LocationManagerImpl implements LocationManager {
 
     @Override
     public World getLobby() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLobby'");
+        return Bukkit.getWorld("lobby");
     }
 
     @Override
@@ -45,7 +46,7 @@ public class LocationManagerImpl implements LocationManager{
         var b = world.getHighestBlockAt(rx, rz);
 
         return b.getRelative(BlockFace.UP).getLocation().add(0.5, 60, 0.5);
-    
+
     }
 
     @Override
@@ -60,7 +61,4 @@ public class LocationManagerImpl implements LocationManager{
         throw new UnsupportedOperationException("Unimplemented method 'executeScatterOperation'");
     }
 
-
-    
- 
 }
