@@ -77,13 +77,13 @@ public class MonadUHC extends JavaPlugin {
                 commandMetaFunction);
         /** Register Game Related Managers */
         this.scenarioManager = new ScenarioManager(this);
+        this.configManager = new ConfigManager();
+        this.locationManager = new LocationManagerImpl();
         this.teamManager = new TeamManager();
         this.gameManager = new GameManager();
         this.playerManager = new GamePlayerManager();
-        this.locationManager = new LocationManagerImpl();
-        this.configManager = new ConfigManager();
 
-        constructCommands();
+        this.constructCommands();
     }
 
     /**

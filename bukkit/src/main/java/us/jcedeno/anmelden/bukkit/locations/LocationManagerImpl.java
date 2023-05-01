@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockFace;
 
 import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
@@ -18,21 +19,42 @@ import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
  */
 public class LocationManagerImpl implements LocationManager {
 
+
+    public LocationManagerImpl() {
+        // create lobby world
+        getLobby();
+    }
+
+    /**
+     * This method return a lobby world if it already exists otherwise it creates a
+     * new one.
+     * 
+     * @return A non-null Bukkit {@link World}
+     */
     @Override
     public World getLobby() {
-        return Bukkit.getWorld("lobby");
+        return getOrCreateWorld("lobby");
+    }
+
+    private World getOrCreateWorld(final String worldName) {
+        var x = Bukkit.getWorld(worldName);
+
+        if (x != null)
+            return x;
+
+        var worldCreator = WorldCreator.name(worldName).generateStructures(false);
+
+        return Bukkit.createWorld(worldCreator);
     }
 
     @Override
     public World getGameWorld() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGameWorld'");
+        return getOrCreateWorld("world");
     }
 
     @Override
     public Location getLobbySpawnPoint() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLobbySpawnPoint'");
+        return new Location(this.getLobby(), 0.5, 65.5,0.5, 0,0);
     }
 
     @Override

@@ -24,6 +24,9 @@ public class Game implements Runnable {
 
     private @Getter @Setter @NonNull Map<Integer, Consumer<Game>> gameLoopActions = new HashMap<>();
 
+    // Game stage, starts at init.
+    private @Getter @Setter Stage stage = Stage.INIT;
+
     // Timings
     private @Setter @NonNull Integer finalHealTime = 10;
     private @Setter @NonNull Integer pvpTime = 60 * 10;

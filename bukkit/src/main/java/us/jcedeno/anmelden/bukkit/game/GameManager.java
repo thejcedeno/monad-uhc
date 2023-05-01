@@ -6,19 +6,17 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
+import us.jcedeno.anmelden.bukkit.game.listener.LobbyStage;
 import us.jcedeno.anmelden.bukkit.game.models.Game;
+import us.jcedeno.anmelden.bukkit.game.models.Stage;
 
 /**
  * A class to manage all the interactions with the game object, the game loop
@@ -31,15 +29,85 @@ public class GameManager implements Listener {
 
     protected Game game;
 
-    @EventHandler
-    public void onPlayerDmgCancel(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player p) {
-            e.setCancelled(true);
-        }
-    }
+    private LobbyStage lobbyListener;
 
     public GameManager() {
         this.game = Game.of();
+        this.tempGameLoop();
+        // Update game stage and register lobby listeners
+        this.lobbyListener = new LobbyStage();
+        this.game().setStage(Stage.LOBBY);
+        Bukkit.getPluginManager().registerEvents(lobbyListener, MonadUHC.instance());
+
+        // TODO: IMPROVE THIS <-- GAME LOOP
+        Bukkit.getScheduler().runTaskTimerAsynchronously(MonadUHC.instance(), this.game, 0, 20L);
+    }
+
+    /**
+     * @return the current game object.
+     */
+    public Game game() {
+        return this.game;
+    }
+
+    /**
+     * Function that updates the game stage and registers the appropriate listeners.
+     */
+    public void registerStage(Stage stage) {
+        switch (stage) {
+            case LOBBY:
+                Bukkit.getPluginManager().registerEvents(new LobbyStage(), MonadUHC.instance());
+                break;
+            case GAME:
+            case STARTING:
+                HandlerList.unregisterAll(lobbyListener);
+                break;
+            case END:
+                break;
+            default:
+                break;
+        }
+
+        this.game.setStage(stage);
+    }
+
+    /**
+     * Sets the current game object.
+     * 
+     * @param game the game object.
+     * 
+     * @return the new game object.
+     */
+    public Game game(final Game game) {
+        // log last game.
+        this.logGame(this.game);
+        // set new game.
+        this.game = game;
+        // return new game.
+        return this.game();
+    }
+
+    /**
+     * Helper function to handle the current -> next second transition and update
+     * everything
+     * 
+     * @param game
+     */
+    public void gameLoopUpdates(final Game game) {
+
+    }
+
+    /**
+     * Logs a game object to file.
+     * 
+     * @param game the game object.
+     */
+    public void logGame(Game game) {
+        // TODO: serialize the game object to json and save it to a file.
+        log.info("Last Game was: " + game);
+    }
+
+    private void tempGameLoop() {
         game.setFinalHealTime(120);
 
         var actions = new HashMap<Integer, Consumer<Game>>();
@@ -92,56 +160,9 @@ public class GameManager implements Listener {
                 });
                 p.playSound(p.getLocation(), "minecraft:entity.player.levelup", 1, 1);
             });
-            // Temporarily register a No Damage Listener
         });
 
         game.setGameLoopActions(actions);
-
-        // TODO: IMPROVE THIS SUCH THAT IT IS UNIT TESTABLE
-        Bukkit.getScheduler().runTaskTimerAsynchronously(MonadUHC.instance(), this.game, 0, 20L);
-    }
-
-    /**
-     * @return the current game object.
-     */
-    public Game game() {
-        return this.game;
-    }
-
-    /**
-     * Sets the current game object.
-     * 
-     * @param game the game object.
-     * 
-     * @return the new game object.
-     */
-    public Game game(final Game game) {
-        // log last game.
-        this.logGame(this.game);
-        // set new game.
-        this.game = game;
-        // return new game.
-        return this.game();
-    }
-
-    /**
-     * Helper function to handle the current -> next second transition and update
-     * everything
-     * 
-     * @param game
-     */
-    public void gameLoopUpdates(final Game game) {
-
-    }
-
-    /**
-     * Logs a game object to file.
-     * 
-     * @param game the game object.
-     */
-    public void logGame(Game game) {
-        // TODO: serialize the game object to json and save it to a file.
-        log.info("Last Game was: " + game);
     }
 
 }
