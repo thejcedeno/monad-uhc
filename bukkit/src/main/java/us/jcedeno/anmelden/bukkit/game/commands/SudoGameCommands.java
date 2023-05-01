@@ -12,6 +12,7 @@ import cloud.commandframework.annotations.processing.CommandContainer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.game.GameManager;
+import us.jcedeno.anmelden.bukkit.game.models.Stage;
 
 @CommandContainer
 public class SudoGameCommands {
@@ -26,6 +27,8 @@ public class SudoGameCommands {
         sender.sendMessage(MiniMessage.miniMessage().deserialize("<gradient:#ff0000:#00ff00>Game started!</gradient>"));
 
         gameManager.game().setHolding(false);
+
+        gameManager.registerStage(Stage.STARTING);
 
     }
 
