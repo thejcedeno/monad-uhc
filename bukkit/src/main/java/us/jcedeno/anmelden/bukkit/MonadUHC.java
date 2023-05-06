@@ -20,6 +20,7 @@ import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
 import us.jcedeno.anmelden.bukkit.players.GamePlayerManager;
 import us.jcedeno.anmelden.bukkit.scenarios.ScenarioManager;
 import us.jcedeno.anmelden.bukkit.teams.TeamManager;
+import us.jcedeno.anmelden.bukkit.whitelist.WhitelistManager;
 
 /**
  * The entry point of the Monad UHC plugin.
@@ -38,6 +39,7 @@ public class MonadUHC extends JavaPlugin {
     private @Getter LocationManager locationManager;
     private @Getter GamePlayerManager playerManager;
     private @Getter ConfigManager configManager;
+    private @Getter WhitelistManager whitelistManager;
 
     /**
      * @return The instance of the MonadUHC plugin.
