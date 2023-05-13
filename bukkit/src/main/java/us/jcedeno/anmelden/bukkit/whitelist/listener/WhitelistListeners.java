@@ -1,34 +1,34 @@
 package us.jcedeno.anmelden.bukkit.whitelist.listener;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.anmelden.bukkit.MonadUHC;
 
-public class WhitelistListeners implements Listener{
+/**
+ * A listener class that holds whitelist related logic.
+ * 
+ * @author jcedeno
+ */
+public class WhitelistListeners implements Listener {
 
     @EventHandler
-    public void onLogin(final AsyncPlayerPreLoginEvent e){
-
+    public void onLoginHandleWL(final PlayerLoginEvent e) {
         final var wm = MonadUHC.instance().getWhitelistManager();
-        // return early if wl off.
-        if(!wm.whitelistEnabled()){
-            return;
-        }
 
-        final var uid = e.getUniqueId();
-        Bukkit.getPlayer(uid);
-        
-        if(!wm.getWhitelist().contains(uid)){
-            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "You are not whitelisted");
-            
-        }
+        if (!wm.isEnabled())
+            return;
+
+        final var p = e.getPlayer();
+
+        if (p.hasPermission("uhc.whitelist.bypass") || wm.isWhitelisted(p.getUniqueId()))
+            return;
+
+        e.disallow(Result.KICK_WHITELIST,
+                MiniMessage.miniMessage().deserialize("<red>You are not in the whitelist! \nHoe."));
     }
 
-    
 }
