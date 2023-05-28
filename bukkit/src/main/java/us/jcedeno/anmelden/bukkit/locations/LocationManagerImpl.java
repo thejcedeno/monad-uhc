@@ -9,7 +9,9 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockFace;
 
+import us.jcedeno.anmelden.bukkit.MonadUHC;
 import us.jcedeno.anmelden.bukkit.locations.interfaces.LocationManager;
+import us.jcedeno.anmelden.bukkit.locations.listener.WorldListener;
 
 /**
  * Handles the world generation, terrain generation, and handles the player
@@ -22,7 +24,9 @@ public class LocationManagerImpl implements LocationManager {
 
     public LocationManagerImpl() {
         // create lobby world
-        getLobby();
+        //getLobby();
+
+        Bukkit.getPluginManager().registerEvents(new WorldListener(), MonadUHC.instance());
     }
 
     /**

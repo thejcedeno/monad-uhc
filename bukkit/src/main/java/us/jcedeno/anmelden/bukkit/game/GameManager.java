@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import lombok.extern.log4j.Log4j2;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -138,31 +138,90 @@ public class GameManager implements Listener {
         actions.put(0, g -> {
             Bukkit.getPluginManager().registerEvents(this, MonadUHC.instance());
             Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<gold>Game has begun!"));
-            Bukkit.getOnlinePlayers().stream().forEach(p -> {
+            Bukkit.getOnlinePlayers().stream()
+                    .forEach(p -> p.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 3)));
+        });
+
+        game.setGameLoopActions(actions);
+    }
+
+    private void sendPrettyMsg(String msg) {
+        Bukkit.broadcast(MiniMessage.miniMessage().deserialize(msg));
+    }
+
+    /**
+     * A function that starts the scattering process, waits until completion, then
+     * properly starts the game
+     */
+    public void startGame() {        
+        registerStage(Stage.STARTING);
+
+        // Prepare scatter locations
+        sendPrettyMsg("<rainbow>Calculating scatter locations...</rainbow>");
+
+        var locManager = MonadUHC.instance().getLocationManager();
+        var scatterWorld = locManager.getGameWorld();
+
+        var locs = Bukkit.getOnlinePlayers().stream().map(p -> locManager.getScatterLocation(scatterWorld, 0, 0, 1000))
+                .toList();
+
+        sendPrettyMsg("<gold><bold>Starting scatter ");
+
+        var players = Bukkit.getOnlinePlayers().iterator();
+
+        locs.forEach(l -> {
+            if (players.hasNext()) {
+                var p = players.next();
+                p.setGameMode(GameMode.SURVIVAL);
+                p.teleport(l);
+                p.sendMessage(MiniMessage.miniMessage().deserialize("<gray>You've been teleported!"));
                 MonadUHC.instance().getPlayerManager().registerGamePlayer(p);
                 p.setHealth(20);
                 p.setFoodLevel(20);
                 // Clear inventory
                 p.getInventory().clear();
                 // Give 3 steaks
-                p.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 3));
                 // Clear xp and all levels
                 p.setLevel(0);
                 p.setExp(0);
                 p.setTotalExperience(0);
                 // Restore hunger
                 p.setSaturation(20);
-                // Play a sound
-                Bukkit.getScheduler().runTask(MonadUHC.instance(), () -> {
-                    p.teleport(MonadUHC.instance().getLocationManager().getScatterLocation(p.getWorld(), 0, 0, 500));
-                    p.setGameMode(GameMode.SURVIVAL);
-                    p.addPotionEffect(PotionEffectType.SLOW_FALLING.createEffect(20, 1));
-                });
-                p.playSound(p.getLocation(), "minecraft:entity.player.levelup", 1, 1);
-            });
+
+            }
         });
 
-        game.setGameLoopActions(actions);
+        sendPrettyMsg("<green>Scatter completed");
+
+        broadcastRules();
+
+        new BukkitRunnable() {
+            int countdown = 5;
+
+            @Override
+            public void run() {
+                if (countdown <= 0) {
+                    this.cancel();
+                    actuallyStartTheGame();
+                    return;
+                }
+                sendPrettyMsg(String.format("<yellow>Starting in <white>%s</white> seconds.</yellow>", countdown));
+                countdown--;
+            }
+
+        }.runTaskTimer(MonadUHC.instance(), 0, 20L);
+
+    }
+
+    private void actuallyStartTheGame() {
+        this.game.setHolding(false);
+
+    }
+
+    private void broadcastRules() {
+        sendPrettyMsg("1. Don't be evil.");
+        sendPrettyMsg("2. Have fun.");
+
     }
 
 }

@@ -84,6 +84,7 @@ public class MonadUHC extends JavaPlugin {
         this.teamManager = new TeamManager();
         this.gameManager = new GameManager();
         this.playerManager = new GamePlayerManager();
+        this.whitelistManager = new WhitelistManager();
 
         this.constructCommands();
     }

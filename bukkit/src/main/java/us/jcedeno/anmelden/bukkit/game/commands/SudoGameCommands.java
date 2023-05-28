@@ -23,12 +23,17 @@ public class SudoGameCommands {
     @CommandDescription("Starts a new game instance, replacing the current one if existant.")
     public void startGame(final Player sender,
             final @Argument(value = "seconds", defaultValue = "3") Integer seconds) {
+
+        gameManager.startGame();
+
+        /**
         // Send game started message:
         sender.sendMessage(MiniMessage.miniMessage().deserialize("<gradient:#ff0000:#00ff00>Game started!</gradient>"));
 
         gameManager.game().setHolding(false);
 
         gameManager.registerStage(Stage.STARTING);
+        */
 
     }
 
